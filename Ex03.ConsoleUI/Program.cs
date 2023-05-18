@@ -4,7 +4,8 @@
     {
         public static void Main(string[] args)
         {
-            UserInterface.RunGarage();
+            UserInterface userInterface = new UserInterface();
+            userInterface.RunGarage();
         }
     }
 }
