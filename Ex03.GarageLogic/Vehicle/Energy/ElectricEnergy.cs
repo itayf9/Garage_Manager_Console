@@ -11,6 +11,12 @@ namespace Ex03.GarageLogic
         private float m_BatteryRemainingTimeInHours;
         private float m_BatteryMaxTimeInHours;
 
+        public ElectricEnergy(float i_BatteryRemainingTimeInHours, float i_BatteryMaxTimeInHours) : base()
+        {
+            this.m_BatteryRemainingTimeInHours = i_BatteryRemainingTimeInHours;
+            this.m_BatteryMaxTimeInHours = i_BatteryMaxTimeInHours;
+        }
+
         public void ChargeBattery(float i_TimeInHoursToCharge)
         {
             if (i_TimeInHoursToCharge < 0)

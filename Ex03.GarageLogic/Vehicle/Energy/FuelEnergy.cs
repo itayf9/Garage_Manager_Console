@@ -12,6 +12,13 @@ namespace Ex03.GarageLogic
         private float m_CurrentFuelAmount;
         private float m_MaxFuelAmount;
 
+        public FuelEnergy(eFuelType fuelType, float currentFuelAmount, float maxFuelAmount) : base()
+        {
+            this.m_FuelType = fuelType;
+            this.m_CurrentFuelAmount = currentFuelAmount;
+            this.m_MaxFuelAmount = maxFuelAmount;
+        }
+
         public void AddFuel(float i_FuelAmoutToAdd, eFuelType i_FuelType)
         {
             if (i_FuelType != m_FuelType || i_FuelAmoutToAdd < 0)

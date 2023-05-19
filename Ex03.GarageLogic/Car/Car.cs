@@ -11,6 +11,12 @@ namespace Ex03.GarageLogic
         private eCarColor m_color;
         private eNumberOfDoors m_numberOfDoors;
 
+        public Car (string i_ModelName, string i_LisenceNumber, float i_RemainEnergyPercentege, Energy i_EnergySource, List<Wheel> i_Wheels, eCarColor i_CarColor, eNumberOfDoors i_NumberOfDoors) : base(i_ModelName, i_LisenceNumber, i_RemainEnergyPercentege, i_EnergySource, i_Wheels)
+        {
+            this.m_color = i_CarColor;
+            this.m_numberOfDoors = i_NumberOfDoors;
+        }
+
         public override string ToString()
         {
             StringBuilder toStringBuilder = new StringBuilder();

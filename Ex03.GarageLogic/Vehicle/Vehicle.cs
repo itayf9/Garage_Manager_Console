@@ -24,6 +24,15 @@ namespace Ex03.GarageLogic
             get { return m_Wheels; }
         }
 
+        public Vehicle(string i_ModelName, string i_LisenceNumber, float i_RemainEnergyPercentege, Energy i_EnergySource, List<Wheel> i_Wheels)
+        {
+            this.m_ModelName = i_ModelName;
+            this.m_LisenceNumber = i_LisenceNumber;
+            this.m_RemainEnergyPercentege = i_RemainEnergyPercentege;
+            this.m_EnergySource = i_EnergySource;
+            this.m_Wheels = i_Wheels;
+        }
+
         public override string ToString()
         {
             StringBuilder toStringBuilder = new StringBuilder();

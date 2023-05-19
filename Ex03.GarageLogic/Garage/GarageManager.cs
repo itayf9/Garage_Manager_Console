@@ -10,16 +10,13 @@ namespace Ex03.GarageLogic
     {
         private Dictionary<string, VehicleInfo> m_VehicleLisenceNumberToVehiclesInformationsInTheGarage;
 
-        public void AddNewVehicle(
-            VehicleFactory.eVehicleType i_UserVehicle,
-            string i_ModelName,
-            string i_LicensePlateNumber,
-            Customer i_Owner,
-            string i_ManufacturerName,
-            float i_CurrentAirPressure,
-            List<object> i_InfoFromUser,
-            float i_CurrentEnergy)
+        public void AddNewVehicle(VehicleFactory.eAvailableVehicleTypes i_VehicleType, string i_ModelName, string i_LicenseNumber, string i_OwnerName, string i_OwnerPhoneNumber, float i_RemainEnergyPercentege, string i_WheelManufacturerName, float i_WheelCurrentAirPressure, Dictionary<string ,object> i_AdditionalSpecificProperties)
         {
+            Vehicle newVehicle = VehicleFactory.createNewVehicle(i_VehicleType, i_ModelName, i_LicenseNumber, i_OwnerName, i_OwnerPhoneNumber, i_RemainEnergyPercentege, i_WheelManufacturerName, i_WheelCurrentAirPressure, i_AdditionalSpecificProperties);
+
+            VehicleInfo newVehicleInformation = new VehicleInfo(i_OwnerName, i_OwnerPhoneNumber, newVehicle, eVehicleFixingState.InProgress);
+
+            m_VehicleLisenceNumberToVehiclesInformationsInTheGarage.Add(i_LicenseNumber, newVehicleInformation);
         }
 
         public void ChangeVehicleState(string i_LisenceNumber, eVehicleFixingState i_NewState)

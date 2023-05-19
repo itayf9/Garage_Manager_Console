@@ -24,6 +24,14 @@ namespace Ex03.GarageLogic
             set { m_FixingState = value; }
         }
 
+        public VehicleInfo(string i_OwnerName, string i_OwnerPhoneNumber, Vehicle i_Vehicle, eVehicleFixingState i_FixingState)
+        {
+            this.m_OwnerName = i_OwnerName;
+            this.m_OwnerPhoneNumber = i_OwnerPhoneNumber;
+            this.m_Vehicle = i_Vehicle;
+            this.FixingState = i_FixingState;
+        }
+
         public override string ToString()
         {
             StringBuilder toStringBuilder = new StringBuilder();
