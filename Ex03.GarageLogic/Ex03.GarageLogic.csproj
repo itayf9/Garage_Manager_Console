@@ -40,22 +40,23 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Car.cs" />
-    <Compile Include="eCarColor.cs" />
-    <Compile Include="eFuelType.cs" />
-    <Compile Include="ElectricEnergy.cs" />
-    <Compile Include="eLisenceType.cs" />
-    <Compile Include="Energy.cs" />
-    <Compile Include="eNumberOfDoors.cs" />
-    <Compile Include="eVehicleFixingState.cs" />
-    <Compile Include="FuelEnergy.cs" />
-    <Compile Include="GarageManager.cs" />
-    <Compile Include="Motorcycle.cs" />
-    <Compile Include="Truck.cs" />
-    <Compile Include="ValueOutOfRangeException.cs" />
-    <Compile Include="Vehicle.cs" />
-    <Compile Include="VehicleInfo.cs" />
-    <Compile Include="Wheel.cs" />
+    <Compile Include="Car\Car.cs" />
+    <Compile Include="Car\eCarColor.cs" />
+    <Compile Include="Vehicle\Energy\eFuelType.cs" />
+    <Compile Include="Vehicle\Energy\ElectricEnergy.cs" />
+    <Compile Include="Motorcycle\eLisenceType.cs" />
+    <Compile Include="Vehicle\Energy\Energy.cs" />
+    <Compile Include="Car\eNumberOfDoors.cs" />
+    <Compile Include="Garage\eVehicleFixingState.cs" />
+    <Compile Include="Vehicle\Energy\FuelEnergy.cs" />
+    <Compile Include="Garage\GarageManager.cs" />
+    <Compile Include="Motorcycle\Motorcycle.cs" />
+    <Compile Include="Truck\Truck.cs" />
+    <Compile Include="Exception\ValueOutOfRangeException.cs" />
+    <Compile Include="Vehicle\Vehicle.cs" />
+    <Compile Include="Vehicle\VehicleFactory.cs" />
+    <Compile Include="Garage\VehicleInfo.cs" />
+    <Compile Include="Vehicle\Wheel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />

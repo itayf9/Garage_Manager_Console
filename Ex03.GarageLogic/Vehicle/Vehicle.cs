@@ -12,5 +12,6 @@ namespace Ex03.GarageLogic
         private string m_LisenceNumber;
         private float m_RemainEnergyPercentege;
         private Energy m_EnergySource;
+        private List<Wheel> m_Wheels;
     }
 }

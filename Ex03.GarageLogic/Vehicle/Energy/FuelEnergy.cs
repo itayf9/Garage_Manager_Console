@@ -14,7 +14,7 @@ namespace Ex03.GarageLogic
 
         public void AddFuel(float i_FuelAmoutToAdd, eFuelType i_FuelType)
         {
-
+            
         }
     }
 }
