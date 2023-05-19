@@ -12,6 +12,5 @@ namespace Ex03.GarageLogic
         Octan95,
         Octan96,
         Octan98,
-
     }
 }

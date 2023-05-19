@@ -2,12 +2,11 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Reflection;
     using Ex03.GarageLogic;
 
     public class UserInterface
     {
-        GarageManager m_GarageManager;
+        private GarageManager m_GarageManager;
 
         public UserInterface()
         {
@@ -41,12 +40,11 @@
                 {
                     displayGeneralExceptionMessage();
                 }
-
             }
             while (userChoice != eMenuOption.Exit);
         }
 
-        private static void printMenu()
+        private void printMenu()
         {
             Console.Clear();
             Console.WriteLine(@"Welcome To My GARAGE!!
@@ -61,7 +59,7 @@ Please Choose:
 8. Exit");
         }
 
-        private static void getChoice(ref eMenuOption io_UserChoice)
+        private void getChoice(ref eMenuOption io_UserChoice)
         {
             bool validInput;
             int userChoice;
@@ -89,6 +87,205 @@ Please Choose:
                     validInput = false;
                 }
             }
+        }
+
+        private VehicleFactory.eVehicleType chooseVehicleType()
+        {
+            bool validInput = false;
+            VehicleFactory.eVehicleType userVehicle = VehicleFactory.eVehicleType.RegularCar;
+            string inputFromUser;
+            int userChioce;
+
+            do
+            {
+                try
+                {
+                    printAllTypeOfVehicles();
+                    inputFromUser = Console.ReadLine();
+                    userChioce = int.Parse(inputFromUser);
+                    if (userChioce > 0 && userChioce <= Enum.GetNames(typeof(VehicleFactory.eVehicleType)).Length)
+                    {
+                        userVehicle = (VehicleFactory.eVehicleType)Enum.Parse(typeof(VehicleFactory.eVehicleType), inputFromUser);
+                        validInput = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("invalid input. Try again.");
+                    }
+                }
+                catch (ArgumentException argumentException)
+                {
+                    displayArgumentExceptionMessage(argumentException);
+                }
+                catch (Exception)
+                {
+                    displayGeneralExceptionMessage();
+                }
+            }
+            while (!validInput);
+
+            return userVehicle;
+        }
+
+        private float insertAmountOf(string i_DescriptionAmount)
+        {
+            Console.WriteLine("Please enter the amount of {0}: ", i_DescriptionAmount);
+            bool validAmount = false;
+            float amountOf = 0;
+            while (!validAmount)
+            {
+                try
+                {
+                    amountOf = float.Parse(Console.ReadLine());
+                    if (amountOf < 0)
+                    {
+                        validAmount = false;
+                        Console.WriteLine("The amount can`t be negative. Please try again: ");
+                    }
+                    else
+                    {
+                        validAmount = true;
+                    }
+                }
+                catch (Exception)
+                {
+                    displayGeneralExceptionMessage();
+                }
+            }
+
+            return amountOf;
+        }
+
+        private void insertSpecificName(out string o_Name, string i_NameDescription)
+        {
+            bool validName = false, isNameInputWithoutSigns = true;
+            Console.WriteLine("Please enter the {0} name: ", i_NameDescription);
+            o_Name = Console.ReadLine();
+            while (!validName)
+            {
+                if (o_Name.Length == 0)
+                {
+                    Console.WriteLine("You inserted an empty name. Please try again: ");
+                    o_Name = Console.ReadLine();
+                    continue;
+                }
+                else
+                {
+                    foreach (char letter in o_Name)
+                    {
+                        if (!char.IsLetter(letter) && letter != ' ' && !char.IsDigit(letter))
+                        {
+                            isNameInputWithoutSigns = false;
+                            Console.WriteLine("Wrong Input. Please enter only letters: ");
+                            o_Name = Console.ReadLine();
+                            break;
+                        }
+                    }
+                }
+
+                if (isNameInputWithoutSigns)
+                {
+                    validName = true;
+                }
+                else
+                {
+                    isNameInputWithoutSigns = true;
+                }
+            }
+        }
+
+        private void insertPhoneNumber(out string o_PhoneNumber)
+        {
+            bool validPhoneNumber = false, isDigitsOnly = true;
+            Console.WriteLine("Please enter your phone number (10 digits): ");
+            o_PhoneNumber = Console.ReadLine();
+            while (!validPhoneNumber)
+            {
+                if (o_PhoneNumber.Length != 10)
+                {
+                    Console.WriteLine("you must type exactly 10 digits. Try again: ");
+                    o_PhoneNumber = Console.ReadLine();
+                    continue;
+                }
+                else
+                {
+                    foreach (char digit in o_PhoneNumber)
+                    {
+                        if (!char.IsDigit(digit))
+                        {
+                            isDigitsOnly = false;
+                            Console.WriteLine("Invalid Input. Please enter digits only: ");
+                            o_PhoneNumber = Console.ReadLine();
+                            break;
+                        }
+                    }
+                }
+
+                if (isDigitsOnly)
+                {
+                    validPhoneNumber = true;
+                }
+                else
+                {
+                    isDigitsOnly = true;
+                }
+            }
+        }
+
+        private void getPersonalDetails(out Customer o_Owner)
+        {
+            insertSpecificName(out string ownerName, "vehicle owner");
+            insertPhoneNumber(out string phoneNumber);
+            o_Owner = new Customer(ownerName, phoneNumber);
+        }
+
+        private eVehicleFixingState chooseVehicleState()
+        {
+            bool validInput = false;
+            eVehicleFixingState newState = eVehicleFixingState.InProgress;
+            do
+            {
+                try
+                {
+                    displayAllTypeOfState();
+                    validInput = parseFixingStateFromInput(Console.ReadLine(), out newState);
+                }
+                catch (FormatException formatException)
+                {
+                    displayFormatExceptionMessage(formatException);
+                }
+                catch (ValueOutOfRangeException valueOutOfRangeException)
+                {
+                    displayValueOutOfRangeExceptionMessage(valueOutOfRangeException);
+                }
+            }
+            while (!validInput);
+
+            return newState;
+        }
+
+        private bool parseFixingStateFromInput(string i_UserInput, out eVehicleFixingState o_DesiredState)
+        {
+            bool isValid = false;
+            o_DesiredState = eVehicleFixingState.InProgress;
+            if (int.TryParse(i_UserInput, out int vehicleState))
+            {
+                if (vehicleState == (int)eVehicleFixingState.InProgress || vehicleState == (int)eVehicleFixingState.Fixed || vehicleState == (int)eVehicleFixingState.Paid)
+                {
+                    o_DesiredState = (eVehicleFixingState)vehicleState;
+                    isValid = true;
+                }
+                else
+                {
+                    throw new ValueOutOfRangeException(Enum.GetNames(typeof(eVehicleFixingState)).Length, 1);
+                }
+            }
+            else
+            {
+                throw new FormatException("You didn't entered the right digit!");
+            }
+
+            return isValid;
         }
 
         private void applyUserChoice(eMenuOption i_UserChoice)
@@ -151,51 +348,12 @@ Please Choose:
             }
         }
 
-        private static VehicleFactory.eVehicleType chooseVehicleType()
-        {
-            bool validInput = false;
-            VehicleFactory.eVehicleType userVehicle = VehicleFactory.eVehicleType.RegularCar;
-            string inputFromUser;
-            int userChioce;
-
-            do
-            {
-                try
-                {
-                    printAllTypeOfVehicles();
-                    inputFromUser = Console.ReadLine();
-                    userChioce = int.Parse(inputFromUser);
-                    if (userChioce > 0 && userChioce <= Enum.GetNames(typeof(VehicleFactory.eVehicleType)).Length)
-                    {
-                        userVehicle = (VehicleFactory.eVehicleType)Enum.Parse(typeof(VehicleFactory.eVehicleType), inputFromUser);
-                        validInput = true;
-                    }
-                    else
-                    {
-                        Console.WriteLine("invalid input. Try again.");
-                    }
-
-                }
-                catch (ArgumentException argumentException)
-                {
-                    displayArgumentExceptionMessage(argumentException);
-                }
-                catch (Exception)
-                {
-                    displayGeneralExceptionMessage();
-                }
-            }
-            while (!validInput);
-
-            return userVehicle;
-        }
-
         private void addVehicle(string i_lisencePlateNumber, VehicleFactory.eVehicleType i_UserVehicle)
         {
-            Dictionary<string, Type> InfoNeededForUser;
+            Dictionary<string, Type> infoNeededForUser;
             bool validInput = false;
             object userInput = null;
-            List<object> InfoForUser = new List<object>();
+            List<object> infoForUser = new List<object>();
 
             insertSpecificName(out string modelName, "Model Vehicle");
             float amountOfEnergy = insertAmountOf("Vehicle Energy");
@@ -203,8 +361,8 @@ Please Choose:
             float currentAirPressure = insertAmountOf("wheels Air Pressure");
             getPersonalDetails(out Customer owner);
 
-            VehicleFactory.GetMoreInfo(i_UserVehicle, out InfoNeededForUser);
-            foreach (KeyValuePair<string, Type> entry in InfoNeededForUser)
+            VehicleFactory.GetMoreInfo(i_UserVehicle, out infoNeededForUser);
+            foreach (KeyValuePair<string, Type> entry in infoNeededForUser)
             {
                 Console.WriteLine(entry.Key);
                 string userInputInString = Console.ReadLine();
@@ -235,7 +393,7 @@ Please Choose:
                         }
 
                         validInput = true;
-                        InfoForUser.Add(userInput);
+                        infoForUser.Add(userInput);
                     }
                     catch (FormatException formatException)
                     {
@@ -254,7 +412,7 @@ Please Choose:
                 validInput = false;
             }
 
-            m_GarageManager.AddNewVehicle(i_UserVehicle, modelName, i_lisencePlateNumber, owner, manufactureName, currentAirPressure, InfoForUser, amountOfEnergy);
+            m_GarageManager.AddNewVehicle(i_UserVehicle, modelName, i_lisencePlateNumber, owner, manufactureName, currentAirPressure, infoForUser, amountOfEnergy);
             Console.WriteLine("vehicle is created succefully.");
             System.Threading.Thread.Sleep(2000);
         }
@@ -274,145 +432,6 @@ Please Choose:
                 Console.WriteLine("Please enter your lisence plate number: ");
                 o_LisencePlateNumber = Console.ReadLine();
             }
-        }
-
-        private static float insertAmountOf(string i_DescriptionAmount)
-        {
-            Console.WriteLine("Please enter the amount of {0}: ", i_DescriptionAmount);
-            bool validAmount = false;
-            float amountOf = 0;
-            while (!validAmount)
-            {
-                try
-                {
-                    amountOf = float.Parse(Console.ReadLine());
-                    if (amountOf < 0)
-                    {
-                        validAmount = false;
-                        Console.WriteLine("The amount can`t be negative. Please try again: ");
-                    }
-                    else
-                    {
-                        validAmount = true;
-                    }
-                }
-                catch (Exception)
-                {
-                    displayGeneralExceptionMessage();
-                }
-            }
-
-            return amountOf;
-        }
-
-        private static void insertSpecificName(out string o_Name, string i_NameDescription)
-        {
-            bool validName = false, isNameInputWithoutSigns = true;
-            Console.WriteLine("Please enter the {0} name: ", i_NameDescription);
-            o_Name = Console.ReadLine();
-            while (!validName)
-            {
-                if (o_Name.Length == 0)
-                {
-                    Console.WriteLine("You inserted an empty name. Please try again: ");
-                    o_Name = Console.ReadLine();
-                    continue;
-                }
-                else
-                {
-                    foreach (char letter in o_Name)
-                    {
-                        if (!char.IsLetter(letter) && letter != ' ' && !char.IsDigit(letter))
-                        {
-                            isNameInputWithoutSigns = false;
-                            Console.WriteLine("Wrong Input. Please enter only letters: ");
-                            o_Name = Console.ReadLine();
-                            break;
-                        }
-                    }
-                }
-
-                if (isNameInputWithoutSigns)
-                {
-                    validName = true;
-                }
-                else
-                {
-                    isNameInputWithoutSigns = true;
-                }
-
-            }
-        }
-
-        private static void insertPhoneNumber(out string o_PhoneNumber)
-        {
-            bool validPhoneNumber = false, isDigitsOnly = true;
-            Console.WriteLine("Please enter your phone number (10 digits): ");
-            o_PhoneNumber = Console.ReadLine();
-            while (!validPhoneNumber)
-            {
-                if (o_PhoneNumber.Length != 10)
-                {
-                    Console.WriteLine("you must type exactly 10 digits. Try again: ");
-                    o_PhoneNumber = Console.ReadLine();
-                    continue;
-                }
-                else
-                {
-                    foreach (char digit in o_PhoneNumber)
-                    {
-                        if (!char.IsDigit(digit))
-                        {
-                            isDigitsOnly = false;
-                            Console.WriteLine("Invalid Input. Please enter digits only: ");
-                            o_PhoneNumber = Console.ReadLine();
-                            break;
-                        }
-
-                    }
-                }
-
-                if (isDigitsOnly)
-                {
-                    validPhoneNumber = true;
-                }
-                else
-                {
-                    isDigitsOnly = true;
-                }
-            }
-        }
-
-        private static void getPersonalDetails(out Customer o_Owner)
-        {
-            insertSpecificName(out string ownerName, "vehicle owner");
-            insertPhoneNumber(out string phoneNumber);
-            o_Owner = new Customer(ownerName, phoneNumber);
-        }
-
-        private static VehicleState.eVehicleState chooseVehicleState()
-        {
-            bool validInput = false;
-            VehicleState.eVehicleState newState = VehicleState.eVehicleState.InRepair;
-            do
-            {
-                try
-                {
-                    displayAllTypeOfState();
-                    validInput = VehicleState.TryParse(Console.ReadLine(), out newState);
-                }
-                catch (FormatException formatException)
-                {
-                    displayFormatExceptionMessage(formatException);
-                }
-                catch (ValueOutOfRangeException valueOutOfRangeException)
-                {
-                    displayValueOutOfRangeExceptionMessage(valueOutOfRangeException);
-                }
-            }
-            while (!validInput);
-
-            return newState;
         }
 
         private void fuelVehicle(string i_LisencePlateNumber)
@@ -470,7 +489,7 @@ Please Choose:
             }
         }
 
-        private static void displayAllTypeOfState()
+        private void displayAllTypeOfState()
         {
             string stateName;
             for (int i = 0; i < Enum.GetNames(typeof(VehicleState.eVehicleState)).Length; i++)
@@ -480,7 +499,7 @@ Please Choose:
             }
         }
 
-        private static void displayAllTypeOfFuel()
+        private void displayAllTypeOfFuel()
         {
             string fuelName;
             for (int i = 2; i <= Enum.GetNames(typeof(EnergySourceType.eEnergySourceType)).Length; i++)
@@ -490,7 +509,7 @@ Please Choose:
             }
         }
 
-        private static void printAllTypeOfVehicles()
+        private void printAllTypeOfVehicles()
         {
             string vehicleType;
             for (int i = 1; i <= Enum.GetNames(typeof(VehicleFactory.eTypeVehicles)).Length; i++)
@@ -508,7 +527,7 @@ Please Choose:
 
         private void displayAllLicenseNumbers()
         {
-            string userChoice = "";
+            string userChoice = string.Empty;
             bool validInput = false;
             while (!validInput)
             {
@@ -530,6 +549,7 @@ Please Choose:
                     displayGeneralExceptionMessage();
                 }
             }
+
             List<string> vehicleLicenses = new List<string>();
             if (userChoice == "Y")
             {
@@ -552,31 +572,32 @@ Please Choose:
                     Console.WriteLine(licenseNumber);
                 }
             }
+
             System.Threading.Thread.Sleep(4000);
         }
 
-        private static void displayFormatExceptionMessage(FormatException i_FormatException)
+        private void displayFormatExceptionMessage(FormatException i_FormatException)
         {
             System.Console.Clear();
             Console.WriteLine(i_FormatException.Message);
             System.Threading.Thread.Sleep(4000);
         }
 
-        private static void displayValueOutOfRangeExceptionMessage(ValueOutOfRangeException i_ValueOutOfRangeException)
+        private void displayValueOutOfRangeExceptionMessage(ValueOutOfRangeException i_ValueOutOfRangeException)
         {
             System.Console.Clear();
             Console.WriteLine(i_ValueOutOfRangeException.Message);
             System.Threading.Thread.Sleep(4000);
         }
 
-        private static void displayArgumentExceptionMessage(ArgumentException i_ArgumentException)
+        private void displayArgumentExceptionMessage(ArgumentException i_ArgumentException)
         {
             System.Console.Clear();
             Console.WriteLine(i_ArgumentException.Message);
             System.Threading.Thread.Sleep(4000);
         }
 
-        private static void displayGeneralExceptionMessage()
+        private void displayGeneralExceptionMessage()
         {
             Console.WriteLine("something went wrong, Try again.");
             System.Threading.Thread.Sleep(1500);
