@@ -8,12 +8,25 @@ namespace Ex03.GarageLogic
 {
     public class ElectricEnergy : Energy
     {
-        private float m_BatteryRemainingTime;
-        private float m_BatteryMaxTime;
+        private float m_BatteryRemainingTimeInHours;
+        private float m_BatteryMaxTimeInHours;
 
-        public void ChargeBattery(float i_TimeToCharge)
+        public void ChargeBattery(float i_TimeInHoursToCharge)
         {
+            if (i_TimeInHoursToCharge < 0)
+            {
+                throw new ArgumentException();
+            }
 
+            float newTimeInHoursAfterCharging = m_BatteryRemainingTimeInHours + i_TimeInHoursToCharge;
+            if (newTimeInHoursAfterCharging > m_BatteryMaxTimeInHours)
+            {
+                throw new ValueOutOfRangeException(0, m_BatteryMaxTimeInHours);
+            }
+            else
+            {
+                m_BatteryRemainingTimeInHours = newTimeInHoursAfterCharging;
+            }
         }
     }
 }

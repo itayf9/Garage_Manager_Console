@@ -14,7 +14,20 @@ namespace Ex03.GarageLogic
 
         public void AddFuel(float i_FuelAmoutToAdd, eFuelType i_FuelType)
         {
-            
+            if (i_FuelType != m_FuelType || i_FuelAmoutToAdd < 0)
+            {
+                throw new ArgumentException();
+            }
+
+            float newFuelAmountAfterAdding = m_CurrentFuelAmount + i_FuelAmoutToAdd;
+            if (newFuelAmountAfterAdding > m_MaxFuelAmount)
+            {
+                throw new ValueOutOfRangeException(0, m_MaxFuelAmount);
+            }
+            else
+            {
+                m_CurrentFuelAmount = newFuelAmountAfterAdding;
+            }
         }
     }
 }
