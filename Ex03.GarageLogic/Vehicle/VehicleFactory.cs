@@ -18,7 +18,7 @@ namespace Ex03.GarageLogic
             Truck,
         }
 
-        public Dictionary<string, Type> GetAddidtionalSpecificPropertiesNameAndTypesForAVehicle(eAvailableVehicleTypes i_VehicleType)
+        public static Dictionary<string, Type> GetAddidtionalSpecificPropertiesNameAndTypesForAVehicle(eAvailableVehicleTypes i_VehicleType)
         {
             Dictionary<string, Type> dictionaryOfAditionalProperties = new Dictionary<string, Type>();
 

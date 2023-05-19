@@ -232,11 +232,12 @@ Please Choose:
             }
         }
 
-        private void getPersonalDetails(out Customer o_Owner)
+        private void getPersonalDetails(out string o_OwnerName, out string o_OwnerPhoneNumber)
         {
-            insertSpecificName(out string ownerName, "vehicle owner");
-            insertPhoneNumber(out string phoneNumber);
-            o_Owner = new Customer(ownerName, phoneNumber);
+            insertSpecificName(out string ownerNameFromUser, "vehicle owner");
+            insertPhoneNumber(out string ownerPhoneNumberFromUser);
+            o_OwnerName = ownerNameFromUser;
+            o_OwnerPhoneNumber = ownerPhoneNumberFromUser;
         }
 
         private eVehicleFixingState chooseVehicleState()
@@ -348,71 +349,71 @@ Please Choose:
             }
         }
 
-        private void addVehicle(string i_lisencePlateNumber, VehicleFactory.eVehicleType i_UserVehicle)
+        private void addVehicle(string i_lisencePlateNumber, VehicleFactory.eAvailableVehicleTypes i_VehicleType)
         {
-            Dictionary<string, Type> infoNeededForUser;
-            bool validInput = false;
+            Dictionary<string, Type> AdditionalSpecificPropertiesNameAndType;
+            bool isValidInput = false;
             object userInput = null;
-            List<object> infoForUser = new List<object>();
+            Dictionary<string ,object> additionalSpecificProperties = new Dictionary<string, object>();
 
             insertSpecificName(out string modelName, "Model Vehicle");
             float amountOfEnergy = insertAmountOf("Vehicle Energy");
             insertSpecificName(out string manufactureName, "Wheel Manufacturer");
             float currentAirPressure = insertAmountOf("wheels Air Pressure");
-            getPersonalDetails(out Customer owner);
+            getPersonalDetails(out string ownerName, out string ownerPhoneNumber);
 
-            VehicleFactory.GetMoreInfo(i_UserVehicle, out infoNeededForUser);
-            foreach (KeyValuePair<string, Type> entry in infoNeededForUser)
+            AdditionalSpecificPropertiesNameAndType = VehicleFactory.GetAddidtionalSpecificPropertiesNameAndTypesForAVehicle(i_VehicleType);
+            foreach (KeyValuePair<string, Type> propertyNameToPropertyTypePair in AdditionalSpecificPropertiesNameAndType)
             {
-                Console.WriteLine(entry.Key);
-                string userInputInString = Console.ReadLine();
-                while (!validInput)
+                Console.WriteLine($"Please Enter {propertyNameToPropertyTypePair.Key}: ");
+                string userInputAsString = Console.ReadLine();
+                while (!isValidInput)
                 {
                     try
                     {
-                        if (entry.Value == typeof(bool))
+                        if (propertyNameToPropertyTypePair.Value == typeof(bool))
                         {
-                            if (userInputInString != "yes" && userInputInString != "no")
+                            if (userInputAsString != "yes" && userInputAsString != "no")
                             {
                                 Console.WriteLine("You must type yes/no");
-                                userInputInString = Console.ReadLine();
+                                userInputAsString = Console.ReadLine();
                                 continue;
                             }
-                            else if (userInputInString == "yes")
+                            else if (userInputAsString == "yes")
                             {
                                 userInput = Convert.ChangeType(true, typeof(bool));
                             }
-                            else if (userInputInString == "no")
+                            else if (userInputAsString == "no")
                             {
                                 userInput = Convert.ChangeType(false, typeof(bool));
                             }
                         }
                         else
                         {
-                            userInput = Convert.ChangeType(userInputInString, entry.Value);
+                            userInput = Convert.ChangeType(userInputAsString, propertyNameToPropertyTypePair.Value);
                         }
 
-                        validInput = true;
-                        infoForUser.Add(userInput);
+                        isValidInput = true;
+                        additionalSpecificProperties.Add(propertyNameToPropertyTypePair.Key, userInput);
                     }
                     catch (FormatException formatException)
                     {
                         displayFormatExceptionMessage(formatException);
-                        userInputInString = Console.ReadLine();
-                        validInput = false;
+                        userInputAsString = Console.ReadLine();
+                        isValidInput = false;
                     }
                     catch (Exception)
                     {
                         Console.WriteLine("Invalid input! Please Try Again: ");
-                        userInputInString = Console.ReadLine();
-                        validInput = false;
+                        userInputAsString = Console.ReadLine();
+                        isValidInput = false;
                     }
                 }
 
-                validInput = false;
+                isValidInput = false;
             }
 
-            m_GarageManager.AddNewVehicle(i_UserVehicle, modelName, i_lisencePlateNumber, owner, manufactureName, currentAirPressure, infoForUser, amountOfEnergy);
+            m_GarageManager.AddNewVehicle(i_VehicleType, modelName, i_lisencePlateNumber, ownerName, ownerPhoneNumber, amountOfEnergy, manufactureName, currentAirPressure, additionalSpecificProperties);
             Console.WriteLine("vehicle is created succefully.");
             System.Threading.Thread.Sleep(2000);
         }
