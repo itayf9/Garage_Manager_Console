@@ -10,5 +10,17 @@ namespace Ex03.GarageLogic
     {
         private eCarColor m_color;
         private eNumberOfDoors m_numberOfDoors;
+
+        public override string ToString()
+        {
+            StringBuilder toStringBuilder = new StringBuilder();
+
+            toStringBuilder.Append(base.ToString());
+            toStringBuilder.Append("Car's color: ").Append(m_color).Append("\n")
+                .Append("Car's number of doors: ").Append(m_numberOfDoors).Append("\n");
+
+            return toStringBuilder.ToString();
+
+        }
     }
 }

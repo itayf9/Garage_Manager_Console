@@ -297,7 +297,7 @@ Please Choose:
             else if (i_UserChoice != eMenuOption.Exit)
             {
                 getLisencePlateNumber(out string lisencePlateNumber);
-                bool isVehicleExist = checkIfVehicleExist(lisencePlateNumber);
+                bool isVehicleExist = checkIfVehicleExistsInGarageByLisenceName(lisencePlateNumber);
 
                 if (i_UserChoice == eMenuOption.InsertNewVehicle && !isVehicleExist)
                 {
@@ -321,7 +321,7 @@ Please Choose:
                             System.Threading.Thread.Sleep(1000);
                             break;
                         case eMenuOption.InflateWheelAirToMax:
-                            m_GarageManager.InflateWheels(lisencePlateNumber);
+                            m_GarageManager.InflateWheelsToMaxAirPressure(lisencePlateNumber);
                             Console.WriteLine("All the wheels are inflated to max!");
                             System.Threading.Thread.Sleep(1000);
                             break;
@@ -417,9 +417,9 @@ Please Choose:
             System.Threading.Thread.Sleep(2000);
         }
 
-        private bool checkIfVehicleExist(string i_LisencePlateNumber)
+        private bool checkIfVehicleExistsInGarageByLisenceName(string i_LisencePlateNumber)
         {
-            return m_GarageManager.IsLisencePlateNumberExist(i_LisencePlateNumber);
+            return m_GarageManager.IsLisenceNumberExistsInGarage(i_LisencePlateNumber);
         }
 
         private void getLisencePlateNumber(out string o_LisencePlateNumber)
@@ -446,9 +446,10 @@ Please Choose:
                     amountOfFuel = float.Parse(Console.ReadLine());
 
                     displayAllTypeOfFuel();
-                    validInput = EnergySourceType.eEnergySourceType.TryParse(Console.ReadLine(), out EnergySourceType.eEnergySourceType userFuelType);
+                    validInput = eEnergySourceType.TryParse(Console.ReadLine(), out eEnergySourceType userFuelType);
 
-                    m_GarageManager.LoadEnergySource(i_LisencePlateNumber, amountOfFuel, validInput, userFuelType);
+                    m_GarageManager.LoadEnergySource(i_LisencePlateNumber, amountOfFuel, userFuelType);
+                    validInput = true;
                 }
                 catch (FormatException formatException)
                 {
@@ -473,8 +474,8 @@ Please Choose:
                 {
                     Console.WriteLine("Enter Amount of minutes to Charge: ");
                     amountOfEnergy = float.Parse(Console.ReadLine());
+                    m_GarageManager.LoadEnergySource(i_LisencePlateNumber, amountOfEnergy, eEnergySourceType.Electric);
                     validInput = true;
-                    m_GarageManager.LoadEnergySource(i_LisencePlateNumber, amountOfEnergy, validInput, EnergySourceType.eEnergySourceType.Electric);
                 }
                 catch (FormatException formatException)
                 {

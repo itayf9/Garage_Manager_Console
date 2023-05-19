@@ -22,34 +22,93 @@ namespace Ex03.GarageLogic
         {
         }
 
-        public void ChangeVehicleState(string i_LisencePlateNumber, VehicleState.eVehicleState i_NewState)
+        public void ChangeVehicleState(string i_LisenceNumber, eVehicleFixingState i_NewState)
         {
+            VehicleInfo desiredVehicleInformation = findVehicleInformationByLisenceNumber(i_LisenceNumber);
+
+            desiredVehicleInformation.FixingState = i_NewState;
         }
 
-        public void InflateWheels(string i_LisencePlateNumber)
+        private VehicleInfo findVehicleInformationByLisenceNumber(string i_LisenceNumber)
         {
+
+            if (!m_VehicleLisenceNumberToVehiclesInformationsInTheGarage.ContainsKey(i_LisenceNumber))
+            {
+                throw new ArgumentException();
+            }
+
+            return m_VehicleLisenceNumberToVehiclesInformationsInTheGarage[i_LisenceNumber];
+
         }
 
-        public void LoadEnergySource(string i_LisencePlateNumber, float i_AmountOfEnergy, bool i_LegalInput, EnergySourceType.eEnergySourceType i_EnergySource)
+        public void InflateWheelsToMaxAirPressure(string i_LisenceNumber)
         {
+            VehicleInfo desiredVehicleInformation = findVehicleInformationByLisenceNumber(i_LisenceNumber);
+
+            foreach (Wheel wheel in desiredVehicleInformation.Vehicle.Wheels)
+            {
+                wheel.InflateWheel(wheel.MaxAirPressure);
+            }
         }
 
-        public bool IsLisencePlateNumberExist(string i_LisencePlateNumber)
+        public void LoadEnergySource(string i_LisenceNumber, float i_AmountOfEnergy, eEnergySourceType i_EnergySourceType, eFuelType i_FuelType = eFuelType.Undefined)
         {
-            return false;
+            VehicleInfo desiredVehicleInformation = findVehicleInformationByLisenceNumber(i_LisenceNumber);
+
+            if (i_EnergySourceType == eEnergySourceType.Fuel)
+            {
+                FuelEnergy fuelEnergyOfTheDesiredVehicle = desiredVehicleInformation.Vehicle.Energy as FuelEnergy;
+                if (fuelEnergyOfTheDesiredVehicle == null)
+                {
+                    throw new ArgumentException();
+                }
+
+                fuelEnergyOfTheDesiredVehicle.AddFuel(i_AmountOfEnergy, i_FuelType);
+            }
+            else if (i_EnergySourceType == eEnergySourceType.Electric)
+            {
+                ElectricEnergy electricEnergyOfTheDesiredVehicle = desiredVehicleInformation.Vehicle.Energy as ElectricEnergy;
+                if (electricEnergyOfTheDesiredVehicle == null)
+                {
+                    throw new ArgumentException();
+                }
+
+                electricEnergyOfTheDesiredVehicle.ChargeBattery(i_AmountOfEnergy);
+            }
+            else
+            {
+                throw new ArgumentException();
+            }
         }
 
-        public string GetDataOfVehicle(string i_LisencePlateNumber)
+        public bool IsLisenceNumberExistsInGarage(string i_LisenceNumber)
         {
-            return null;
+            return m_VehicleLisenceNumberToVehiclesInformationsInTheGarage.ContainsKey(i_LisenceNumber);
+        }
+
+        public string GetDataOfVehicle(string i_LisenceNumber)
+        {
+            VehicleInfo desiredVehicleInformation = findVehicleInformationByLisenceNumber(i_LisenceNumber);
+
+            return desiredVehicleInformation.ToString();
         }
 
         public void GetAllLicenseNumbers(ref List<string> io_LicenseNumbers)
         {
+            io_LicenseNumbers.AddRange(m_VehicleLisenceNumberToVehiclesInformationsInTheGarage.Keys);
         }
 
-        public void GetAllLicenseNumbersByState(ref List<string> io_LicenseNumbers, VehicleState.eVehicleState i_State)
+        public void GetAllLicenseNumbersByState(ref List<string> io_FilteredLicenseNumbers, eVehicleFixingState i_VehicleFixingState)
         {
+
+            foreach (KeyValuePair<string, VehicleInfo> pairOfLisenceNumberToVehicleInfo in m_VehicleLisenceNumberToVehiclesInformationsInTheGarage)
+            {
+                if (pairOfLisenceNumberToVehicleInfo.Value.FixingState == i_VehicleFixingState)
+                {
+                    io_FilteredLicenseNumbers.Add(pairOfLisenceNumberToVehicleInfo.Key);
+                }
+            }
         }
+
     }
 }

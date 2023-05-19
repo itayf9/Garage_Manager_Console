@@ -12,6 +12,11 @@ namespace Ex03.GarageLogic
         private float m_CurrentAirPressure;
         private float m_MaxAirPressure;
 
+        public float MaxAirPressure
+        {
+            get { return m_MaxAirPressure; }
+        }
+
         public void InflateWheel(float i_AmountOfAirToAdd)
         {
             if (i_AmountOfAirToAdd < 0)
@@ -28,6 +33,16 @@ namespace Ex03.GarageLogic
             {
                 m_CurrentAirPressure = newAirPressureAfterAdding;
             }
+        }
+
+        public override string ToString()
+        {
+            StringBuilder toStringBuilder = new StringBuilder();
+
+            toStringBuilder.Append("Manufacturer name: ").Append(m_ManufacturerName).Append("\n")
+                .Append("Air peressure (current/maximum): ").Append(m_CurrentAirPressure).Append(" / ").Append(m_MaxAirPressure).Append("\n");
+
+            return toStringBuilder.ToString();
         }
     }
 }

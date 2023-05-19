@@ -28,5 +28,14 @@ namespace Ex03.GarageLogic
                 m_BatteryRemainingTimeInHours = newTimeInHoursAfterCharging;
             }
         }
+
+        public override string ToString()
+        {
+            StringBuilder toStringBuilder = new StringBuilder();
+
+            toStringBuilder.Append("Battery time (remaining/maximum): ").Append(m_BatteryRemainingTimeInHours).Append(" / ").Append(m_BatteryMaxTimeInHours).Append(" hours.\n");
+
+            return toStringBuilder.ToString();
+        }
     }
 }

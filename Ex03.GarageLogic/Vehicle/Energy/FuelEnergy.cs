@@ -29,5 +29,15 @@ namespace Ex03.GarageLogic
                 m_CurrentFuelAmount = newFuelAmountAfterAdding;
             }
         }
+
+        public override string ToString()
+        {
+            StringBuilder toStringBuilder = new StringBuilder();
+
+            toStringBuilder.Append("Fuel Type: ").Append(m_FuelType).Append("\n")
+                .Append("Fuel amount (current/maximum): ").Append(m_CurrentFuelAmount).Append(" / ").Append(m_MaxFuelAmount).Append("\n");
+
+            return toStringBuilder.ToString();
+        }
     }
 }
