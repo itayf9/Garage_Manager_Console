@@ -314,29 +314,24 @@ Please Choose:
                         case eMenuOption.InsertNewVehicle:
                             Console.WriteLine("Vehicle is already in the garage!");
                             Console.WriteLine("The state of this vehicle has changed to in-repair.");
-                            System.Threading.Thread.Sleep(1500);
                             r_GarageManager.ChangeVehicleState(lisencePlateNumber, eVehicleFixingState.InProgress);
                             break;
                         case eMenuOption.ChangeVehicleState:
                             eVehicleFixingState newState = chooseVehicleState();
                             r_GarageManager.ChangeVehicleState(lisencePlateNumber, newState);
                             Console.WriteLine("The vehicle state has changed.");
-                            System.Threading.Thread.Sleep(1000);
                             break;
                         case eMenuOption.InflateWheelAirToMax:
                             r_GarageManager.InflateWheelsToMaxAirPressure(lisencePlateNumber);
                             Console.WriteLine("All the wheels are inflated to max!");
-                            System.Threading.Thread.Sleep(1000);
                             break;
                         case eMenuOption.FuelVehicle:
                             fuelVehicle(lisencePlateNumber);
                             Console.WriteLine("The vehicle is successfully refueled!");
-                            System.Threading.Thread.Sleep(1000);
                             break;
                         case eMenuOption.ChargingVehicle:
                             chargeVehicle(lisencePlateNumber);
                             Console.WriteLine("The vehicle is successfully charged!");
-                            System.Threading.Thread.Sleep(1000);
                             break;
                         case eMenuOption.DisplayFullDetailsOnVehicle:
                             displayDataOfVehicle(lisencePlateNumber);
@@ -346,7 +341,6 @@ Please Choose:
                 else
                 {
                     Console.WriteLine("You inserted a license plate that does not exist in the system.");
-                    System.Threading.Thread.Sleep(1500);
                 }
             }
         }
@@ -435,7 +429,6 @@ Please Choose:
 
             r_GarageManager.AddNewVehicle(i_VehicleType, modelName, i_lisencePlateNumber, ownerName, ownerPhoneNumber, amountOfEnergy, manufactureName, currentAirPressure, additionalSpecificProperties);
             Console.WriteLine("vehicle is created succefully.");
-            System.Threading.Thread.Sleep(2000);
         }
 
         private bool checkIfVehicleExistsInGarageByLisenceNumber(string i_LisencePlateNumber)
@@ -544,7 +537,6 @@ Please Choose:
         private void displayDataOfVehicle(string i_LisencePlateNumber)
         {
             Console.WriteLine(r_GarageManager.GetDataOfVehicle(i_LisencePlateNumber));
-            System.Threading.Thread.Sleep(10000);
         }
 
         private void displayLicenseNumbersInGarage()
@@ -595,34 +587,29 @@ Please Choose:
                 }
             }
 
-            System.Threading.Thread.Sleep(4000);
         }
 
         private void displayFormatExceptionMessage(FormatException i_FormatException)
         {
             System.Console.Clear();
             Console.WriteLine(i_FormatException.Message);
-            System.Threading.Thread.Sleep(4000);
         }
 
         private void displayValueOutOfRangeExceptionMessage(ValueOutOfRangeException i_ValueOutOfRangeException)
         {
             System.Console.Clear();
             Console.WriteLine(i_ValueOutOfRangeException.Message);
-            System.Threading.Thread.Sleep(4000);
         }
 
         private void displayArgumentExceptionMessage(ArgumentException i_ArgumentException)
         {
             System.Console.Clear();
             Console.WriteLine(i_ArgumentException.Message);
-            System.Threading.Thread.Sleep(4000);
         }
 
         private void displayGeneralExceptionMessage()
         {
             Console.WriteLine("something went wrong, Try again.");
-            System.Threading.Thread.Sleep(1500);
         }
     }
 }
