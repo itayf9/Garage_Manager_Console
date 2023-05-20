@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using Ex03.GarageLogic;
+    using static Ex03.GarageLogic.VehicleFactory;
 
     public class UserInterface
     {
@@ -89,10 +90,10 @@ Please Choose:
             }
         }
 
-        private VehicleFactory.eVehicleType chooseVehicleType()
+        private VehicleFactory.eAvailableVehicleTypes getVehicleTypeFromUser()
         {
             bool validInput = false;
-            VehicleFactory.eVehicleType userVehicle = VehicleFactory.eVehicleType.RegularCar;
+            VehicleFactory.eAvailableVehicleTypes userVehicle = VehicleFactory.eAvailableVehicleTypes.FuelBasedCar;
             string inputFromUser;
             int userChioce;
 
@@ -100,12 +101,12 @@ Please Choose:
             {
                 try
                 {
-                    printAllTypeOfVehicles();
+                    displayAvailableTypesOfVehicles();
                     inputFromUser = Console.ReadLine();
                     userChioce = int.Parse(inputFromUser);
-                    if (userChioce > 0 && userChioce <= Enum.GetNames(typeof(VehicleFactory.eVehicleType)).Length)
+                    if (userChioce > 0 && userChioce <= Enum.GetNames(typeof(VehicleFactory.eAvailableVehicleTypes)).Length)
                     {
-                        userVehicle = (VehicleFactory.eVehicleType)Enum.Parse(typeof(VehicleFactory.eVehicleType), inputFromUser);
+                        userVehicle = (VehicleFactory.eAvailableVehicleTypes)Enum.Parse(typeof(VehicleFactory.eAvailableVehicleTypes), inputFromUser);
                         validInput = true;
                     }
                     else
@@ -127,7 +128,7 @@ Please Choose:
             return userVehicle;
         }
 
-        private float insertAmountOf(string i_DescriptionAmount)
+        private float getAmountFromUser(string i_DescriptionAmount)
         {
             Console.WriteLine("Please enter the amount of {0}: ", i_DescriptionAmount);
             bool validAmount = false;
@@ -156,7 +157,7 @@ Please Choose:
             return amountOf;
         }
 
-        private void insertSpecificName(out string o_Name, string i_NameDescription)
+        private void getSpecificNameFromUser(out string o_Name, string i_NameDescription)
         {
             bool validName = false, isNameInputWithoutSigns = true;
             Console.WriteLine("Please enter the {0} name: ", i_NameDescription);
@@ -194,7 +195,7 @@ Please Choose:
             }
         }
 
-        private void insertPhoneNumber(out string o_PhoneNumber)
+        private void getPhoneNumberFromUser(out string o_PhoneNumber)
         {
             bool validPhoneNumber = false, isDigitsOnly = true;
             Console.WriteLine("Please enter your phone number (10 digits): ");
@@ -232,10 +233,10 @@ Please Choose:
             }
         }
 
-        private void getPersonalDetails(out string o_OwnerName, out string o_OwnerPhoneNumber)
+        private void getPersonalDetailsFromUser(out string o_OwnerName, out string o_OwnerPhoneNumber)
         {
-            insertSpecificName(out string ownerNameFromUser, "vehicle owner");
-            insertPhoneNumber(out string ownerPhoneNumberFromUser);
+            getSpecificNameFromUser(out string ownerNameFromUser, "Vehicle Owner");
+            getPhoneNumberFromUser(out string ownerPhoneNumberFromUser);
             o_OwnerName = ownerNameFromUser;
             o_OwnerPhoneNumber = ownerPhoneNumberFromUser;
         }
@@ -248,7 +249,7 @@ Please Choose:
             {
                 try
                 {
-                    displayAllTypeOfState();
+                    displayTypesOfVehicleFixingState();
                     validInput = parseFixingStateFromInput(Console.ReadLine(), out newState);
                 }
                 catch (FormatException formatException)
@@ -293,16 +294,16 @@ Please Choose:
         {
             if (i_UserChoice == eMenuOption.DispayListOfLicenseNumbers)
             {
-                displayAllLicenseNumbers();
+                displayLicenseNumbersInGarage();
             }
             else if (i_UserChoice != eMenuOption.Exit)
             {
                 getLisencePlateNumber(out string lisencePlateNumber);
-                bool isVehicleExist = checkIfVehicleExistsInGarageByLisenceName(lisencePlateNumber);
+                bool isVehicleExist = checkIfVehicleExistsInGarageByLisenceNumber(lisencePlateNumber);
 
                 if (i_UserChoice == eMenuOption.InsertNewVehicle && !isVehicleExist)
                 {
-                    VehicleFactory.eVehicleType userVehicle = chooseVehicleType();
+                    VehicleFactory.eAvailableVehicleTypes userVehicle = getVehicleTypeFromUser();
                     addVehicle(lisencePlateNumber, userVehicle);
                 }
                 else if (isVehicleExist)
@@ -313,10 +314,10 @@ Please Choose:
                             Console.WriteLine("Vehicle is already in the garage!");
                             Console.WriteLine("The state of this vehicle has changed to in-repair.");
                             System.Threading.Thread.Sleep(1500);
-                            m_GarageManager.ChangeVehicleState(lisencePlateNumber, VehicleState.eVehicleState.InRepair);
+                            m_GarageManager.ChangeVehicleState(lisencePlateNumber, eVehicleFixingState.InProgress);
                             break;
                         case eMenuOption.ChangeVehicleState:
-                            VehicleState.eVehicleState newState = chooseVehicleState();
+                            eVehicleFixingState newState = chooseVehicleState();
                             m_GarageManager.ChangeVehicleState(lisencePlateNumber, newState);
                             Console.WriteLine("The vehicle state has changed.");
                             System.Threading.Thread.Sleep(1000);
@@ -351,19 +352,19 @@ Please Choose:
 
         private void addVehicle(string i_lisencePlateNumber, VehicleFactory.eAvailableVehicleTypes i_VehicleType)
         {
-            Dictionary<string, Type> AdditionalSpecificPropertiesNameAndType;
+            Dictionary<string, Type> additionalSpecificPropertiesNameAndType;
             bool isValidInput = false;
             object userInput = null;
-            Dictionary<string ,object> additionalSpecificProperties = new Dictionary<string, object>();
+            Dictionary<string, object> additionalSpecificProperties = new Dictionary<string, object>();
 
-            insertSpecificName(out string modelName, "Model Vehicle");
-            float amountOfEnergy = insertAmountOf("Vehicle Energy");
-            insertSpecificName(out string manufactureName, "Wheel Manufacturer");
-            float currentAirPressure = insertAmountOf("wheels Air Pressure");
-            getPersonalDetails(out string ownerName, out string ownerPhoneNumber);
+            getSpecificNameFromUser(out string modelName, "Model Vehicle");
+            float amountOfEnergy = getAmountFromUser("Vehicle Energy");
+            getSpecificNameFromUser(out string manufactureName, "Wheel Manufacturer");
+            float currentAirPressure = getAmountFromUser("wheels Air Pressure");
+            getPersonalDetailsFromUser(out string ownerName, out string ownerPhoneNumber);
 
-            AdditionalSpecificPropertiesNameAndType = VehicleFactory.GetAddidtionalSpecificPropertiesNameAndTypesForAVehicle(i_VehicleType);
-            foreach (KeyValuePair<string, Type> propertyNameToPropertyTypePair in AdditionalSpecificPropertiesNameAndType)
+            additionalSpecificPropertiesNameAndType = VehicleFactory.GetAddidtionalSpecificPropertiesNameAndTypesForAVehicle(i_VehicleType);
+            foreach (KeyValuePair<string, Type> propertyNameToPropertyTypePair in additionalSpecificPropertiesNameAndType)
             {
                 Console.WriteLine($"Please Enter {propertyNameToPropertyTypePair.Key}: ");
                 string userInputAsString = Console.ReadLine();
@@ -418,7 +419,7 @@ Please Choose:
             System.Threading.Thread.Sleep(2000);
         }
 
-        private bool checkIfVehicleExistsInGarageByLisenceName(string i_LisencePlateNumber)
+        private bool checkIfVehicleExistsInGarageByLisenceNumber(string i_LisencePlateNumber)
         {
             return m_GarageManager.IsLisenceNumberExistsInGarage(i_LisencePlateNumber);
         }
@@ -446,7 +447,7 @@ Please Choose:
                     Console.WriteLine("Enter how much liters of fuel you would like to refuel:");
                     amountOfFuel = float.Parse(Console.ReadLine());
 
-                    displayAllTypeOfFuel();
+                    displayTypesOfEnergySource();
                     validInput = eEnergySourceType.TryParse(Console.ReadLine(), out eEnergySourceType userFuelType);
 
                     m_GarageManager.LoadEnergySource(i_LisencePlateNumber, amountOfFuel, userFuelType);
@@ -491,32 +492,32 @@ Please Choose:
             }
         }
 
-        private void displayAllTypeOfState()
+        private void displayTypesOfVehicleFixingState()
         {
             string stateName;
-            for (int i = 0; i < Enum.GetNames(typeof(VehicleState.eVehicleState)).Length; i++)
+            for (int i = 0; i < Enum.GetNames(typeof(eVehicleFixingState)).Length; i++)
             {
-                stateName = ((VehicleState.eVehicleState)i).ToString();
+                stateName = ((eVehicleFixingState)i).ToString();
                 Console.WriteLine("To select {0} press {1}.", stateName, i);
             }
         }
 
-        private void displayAllTypeOfFuel()
+        private void displayTypesOfEnergySource()
         {
             string fuelName;
-            for (int i = 2; i <= Enum.GetNames(typeof(EnergySourceType.eEnergySourceType)).Length; i++)
+            for (int i = 2; i <= Enum.GetNames(typeof(eEnergySourceType)).Length; i++)
             {
-                fuelName = ((EnergySourceType.eEnergySourceType)i).ToString();
+                fuelName = ((eEnergySourceType)i).ToString();
                 Console.WriteLine("To select {0} press {1}.", fuelName, i);
             }
         }
 
-        private void printAllTypeOfVehicles()
+        private void displayAvailableTypesOfVehicles()
         {
             string vehicleType;
-            for (int i = 1; i <= Enum.GetNames(typeof(VehicleFactory.eTypeVehicles)).Length; i++)
+            for (int i = 1; i <= Enum.GetNames(typeof(eAvailableVehicleTypes)).Length; i++)
             {
-                vehicleType = ((VehicleFactory.eTypeVehicles)i).ToString();
+                vehicleType = ((eAvailableVehicleTypes)i).ToString();
                 Console.WriteLine("To select {0} press {1}.", vehicleType, i);
             }
         }
@@ -527,7 +528,7 @@ Please Choose:
             System.Threading.Thread.Sleep(10000);
         }
 
-        private void displayAllLicenseNumbers()
+        private void displayLicenseNumbersInGarage()
         {
             string userChoice = string.Empty;
             bool validInput = false;
@@ -555,7 +556,7 @@ Please Choose:
             List<string> vehicleLicenses = new List<string>();
             if (userChoice == "Y")
             {
-                VehicleState.eVehicleState newState = chooseVehicleState();
+                eVehicleFixingState newState = chooseVehicleState();
                 m_GarageManager.GetAllLicenseNumbersByState(ref vehicleLicenses, newState);
             }
             else
