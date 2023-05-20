@@ -18,6 +18,13 @@ namespace Ex03.GarageLogic
             Truck,
         }
 
+        public static readonly string sr_PropertyNameOfCarColor = "Car Color";
+        public static readonly string sr_PropertyNameOfNumberOfDoors = "Number Of Doors";
+        public static readonly string sr_PropertyNameOfLisenceType = "Lisence Type";
+        public static readonly string sr_PropertyNameOfEngineVolume = "Engine Volume";
+        public static readonly string sr_PropertyNameOfIsCarriesDangerousLoads = "Is Carries Dangarous Loads";
+        public static readonly string sr_PropertyNameOfLoadVolume = "Load Volume";
+
         public static Dictionary<string, Type> GetAddidtionalSpecificPropertiesNameAndTypesForAVehicle(eAvailableVehicleTypes i_VehicleType)
         {
             Dictionary<string, Type> dictionaryOfAditionalProperties = new Dictionary<string, Type>();
@@ -26,17 +33,17 @@ namespace Ex03.GarageLogic
             {
                 case eAvailableVehicleTypes.FuelBasedCar:
                 case eAvailableVehicleTypes.ElectricBasedCar:
-                    dictionaryOfAditionalProperties.Add("carColor", typeof(eCarColor));
-                    dictionaryOfAditionalProperties.Add("numberOfDoors", typeof(eNumberOfDoors));
+                    dictionaryOfAditionalProperties.Add(sr_PropertyNameOfCarColor, typeof(eCarColor));
+                    dictionaryOfAditionalProperties.Add(sr_PropertyNameOfNumberOfDoors, typeof(eNumberOfDoors));
                     break;
                 case eAvailableVehicleTypes.FuelBasedMotorcycle:
                 case eAvailableVehicleTypes.ElectricBasedMotorcycle:
-                    dictionaryOfAditionalProperties.Add("lisenceType", typeof(eLisenceType));
-                    dictionaryOfAditionalProperties.Add("engineVolume", typeof(int));
+                    dictionaryOfAditionalProperties.Add(sr_PropertyNameOfLisenceType, typeof(eLisenceType));
+                    dictionaryOfAditionalProperties.Add(sr_PropertyNameOfEngineVolume, typeof(int));
                     break;
                 case eAvailableVehicleTypes.Truck:
-                    dictionaryOfAditionalProperties.Add("isCarriesDangarousLoads", typeof(bool));
-                    dictionaryOfAditionalProperties.Add("loadVolume", typeof(float));
+                    dictionaryOfAditionalProperties.Add(sr_PropertyNameOfIsCarriesDangerousLoads, typeof(bool));
+                    dictionaryOfAditionalProperties.Add(sr_PropertyNameOfLoadVolume, typeof(float));
                     break;
             }
 
@@ -59,7 +66,7 @@ namespace Ex03.GarageLogic
                         wheelsOfNewlyCreatedVehicle.Add(new Wheel(i_WheelManufacturerName, i_WheelCurrentAirPressure, 33));
                     }
 
-                    newlyCreatedVehicle = new Car(i_ModelName, i_LicenseNumber, i_RemainEnergyPercentege, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eCarColor)i_AdditionalSpecificProperties["carColor"], (eNumberOfDoors)i_AdditionalSpecificProperties["numberOfDoors"]);
+                    newlyCreatedVehicle = new Car(i_ModelName, i_LicenseNumber, i_RemainEnergyPercentege, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eCarColor)i_AdditionalSpecificProperties[sr_PropertyNameOfCarColor], (eNumberOfDoors)i_AdditionalSpecificProperties[sr_PropertyNameOfNumberOfDoors]);
                     break;
                 case eAvailableVehicleTypes.ElectricBasedCar:
                     energySourceOfNewlyCreatedVehicle = new ElectricEnergy(i_RemainEnergyPercentege, 5.2f);
@@ -69,7 +76,7 @@ namespace Ex03.GarageLogic
                         wheelsOfNewlyCreatedVehicle.Add(new Wheel(i_WheelManufacturerName, i_WheelCurrentAirPressure, 33));
                     }
 
-                    newlyCreatedVehicle = new Car(i_ModelName, i_LicenseNumber, i_RemainEnergyPercentege, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eCarColor)i_AdditionalSpecificProperties["carColor"], (eNumberOfDoors)i_AdditionalSpecificProperties["numberOfDoors"]);
+                    newlyCreatedVehicle = new Car(i_ModelName, i_LicenseNumber, i_RemainEnergyPercentege, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eCarColor)i_AdditionalSpecificProperties[sr_PropertyNameOfCarColor], (eNumberOfDoors)i_AdditionalSpecificProperties[sr_PropertyNameOfNumberOfDoors]);
                     break;
                 case eAvailableVehicleTypes.FuelBasedMotorcycle:
                     energySourceOfNewlyCreatedVehicle = new FuelEnergy(eFuelType.Octan98, i_RemainEnergyPercentege, 6.4f);
@@ -79,7 +86,7 @@ namespace Ex03.GarageLogic
                         wheelsOfNewlyCreatedVehicle.Add(new Wheel(i_WheelManufacturerName, i_WheelCurrentAirPressure, 31));
                     }
 
-                    newlyCreatedVehicle = new Motorcycle(i_ModelName, i_LicenseNumber, i_RemainEnergyPercentege, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eLisenceType)i_AdditionalSpecificProperties["lisenceType"], (int)i_AdditionalSpecificProperties["engineVolume"]);
+                    newlyCreatedVehicle = new Motorcycle(i_ModelName, i_LicenseNumber, i_RemainEnergyPercentege, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eLisenceType)i_AdditionalSpecificProperties[sr_PropertyNameOfLisenceType], (int)i_AdditionalSpecificProperties[sr_PropertyNameOfEngineVolume]);
                     break;
                 case eAvailableVehicleTypes.ElectricBasedMotorcycle:
                     energySourceOfNewlyCreatedVehicle = new ElectricEnergy(i_RemainEnergyPercentege, 2.6f);
@@ -89,7 +96,7 @@ namespace Ex03.GarageLogic
                         wheelsOfNewlyCreatedVehicle.Add(new Wheel(i_WheelManufacturerName, i_WheelCurrentAirPressure, 31));
                     }
 
-                    newlyCreatedVehicle = new Motorcycle(i_ModelName, i_LicenseNumber, i_RemainEnergyPercentege, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eLisenceType)i_AdditionalSpecificProperties["lisenceType"], (int)i_AdditionalSpecificProperties["engineVolume"]);
+                    newlyCreatedVehicle = new Motorcycle(i_ModelName, i_LicenseNumber, i_RemainEnergyPercentege, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eLisenceType)i_AdditionalSpecificProperties[sr_PropertyNameOfLisenceType], (int)i_AdditionalSpecificProperties[sr_PropertyNameOfEngineVolume]);
                     break;
                 case eAvailableVehicleTypes.Truck:
                     energySourceOfNewlyCreatedVehicle = new FuelEnergy(eFuelType.Soler, i_RemainEnergyPercentege, 135);
@@ -99,7 +106,7 @@ namespace Ex03.GarageLogic
                         wheelsOfNewlyCreatedVehicle.Add(new Wheel(i_WheelManufacturerName, i_WheelCurrentAirPressure, 31));
                     }
 
-                    newlyCreatedVehicle = new Truck(i_ModelName, i_LicenseNumber, i_RemainEnergyPercentege, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (bool)i_AdditionalSpecificProperties["isCarriesDangarousLoads"], (float)i_AdditionalSpecificProperties["loadVolume"]);
+                    newlyCreatedVehicle = new Truck(i_ModelName, i_LicenseNumber, i_RemainEnergyPercentege, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (bool)i_AdditionalSpecificProperties[sr_PropertyNameOfIsCarriesDangerousLoads], (float)i_AdditionalSpecificProperties[sr_PropertyNameOfLoadVolume]);
                     break;
                 default:
                     newlyCreatedVehicle = null;
