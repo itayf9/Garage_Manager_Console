@@ -8,15 +8,16 @@ namespace Ex03.GarageLogic
 {
     public class FuelEnergy : Energy
     {
+        private readonly float r_MaxFuelAmount;
         private eFuelType m_FuelType;
         private float m_CurrentFuelAmount;
-        private float m_MaxFuelAmount;
 
-        public FuelEnergy(eFuelType fuelType, float currentFuelAmount, float maxFuelAmount) : base()
+        public FuelEnergy(eFuelType fuelType, float currentFuelAmount, float maxFuelAmount)
+            : base()
         {
             this.m_FuelType = fuelType;
             this.m_CurrentFuelAmount = currentFuelAmount;
-            this.m_MaxFuelAmount = maxFuelAmount;
+            this.r_MaxFuelAmount = maxFuelAmount;
         }
 
         public void AddFuel(float i_FuelAmoutToAdd, eFuelType i_FuelType)
@@ -27,9 +28,9 @@ namespace Ex03.GarageLogic
             }
 
             float newFuelAmountAfterAdding = m_CurrentFuelAmount + i_FuelAmoutToAdd;
-            if (newFuelAmountAfterAdding > m_MaxFuelAmount)
+            if (newFuelAmountAfterAdding > r_MaxFuelAmount)
             {
-                throw new ValueOutOfRangeException(0, m_MaxFuelAmount);
+                throw new ValueOutOfRangeException(0, r_MaxFuelAmount);
             }
             else
             {
@@ -42,7 +43,7 @@ namespace Ex03.GarageLogic
             StringBuilder toStringBuilder = new StringBuilder();
 
             toStringBuilder.Append("Fuel Type: ").Append(m_FuelType).Append("\n")
-                .Append("Fuel amount (current/maximum): ").Append(m_CurrentFuelAmount).Append(" / ").Append(m_MaxFuelAmount).Append("\n");
+                .Append("Fuel amount (current/maximum): ").Append(m_CurrentFuelAmount).Append(" / ").Append(r_MaxFuelAmount).Append("\n");
 
             return toStringBuilder.ToString();
         }

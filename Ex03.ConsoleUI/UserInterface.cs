@@ -23,6 +23,7 @@
                 try
                 {
                     getChoice(ref userChoice);
+                    Console.Clear();
                     applyUserChoice(userChoice);
                 }
                 catch (FormatException formatException)
@@ -47,8 +48,8 @@
 
         private void printMenu()
         {
-            Console.Clear();
-            Console.WriteLine(@"Welcome To My GARAGE!!
+            Console.WriteLine(@"
+Welcome To My GARAGE!!
 Please Choose:
 1. Insert A new vehicle
 2. Show the garage's vehicle license numbers list.
@@ -366,7 +367,21 @@ Please Choose:
             additionalSpecificPropertiesNameAndType = VehicleFactory.GetAddidtionalSpecificPropertiesNameAndTypesForAVehicle(i_VehicleType);
             foreach (KeyValuePair<string, Type> propertyNameToPropertyTypePair in additionalSpecificPropertiesNameAndType)
             {
-                Console.WriteLine($"Please Enter {propertyNameToPropertyTypePair.Key}: ");
+                Console.WriteLine($"Please Enter {propertyNameToPropertyTypePair.Key}");
+                if (propertyNameToPropertyTypePair.Value.IsEnum)
+                {
+                    System.Text.StringBuilder enumStringBuilder = new System.Text.StringBuilder();
+                    enumStringBuilder.Append("(enter one of the following: ");
+                    foreach (string nameOfEnum in propertyNameToPropertyTypePair.Value.GetEnumNames())
+                    {
+                        enumStringBuilder.Append(nameOfEnum).Append(" ");
+                    }
+
+                    enumStringBuilder.Append(") ");
+                    Console.Write(enumStringBuilder.ToString());
+                }
+
+                Console.WriteLine(": ");
                 string userInputAsString = Console.ReadLine();
                 while (!isValidInput)
                 {
@@ -388,6 +403,10 @@ Please Choose:
                             {
                                 userInput = Convert.ChangeType(false, typeof(bool));
                             }
+                        }
+                        else if (propertyNameToPropertyTypePair.Value.IsEnum)
+                        {
+                            userInput = Enum.Parse(propertyNameToPropertyTypePair.Value, userInputAsString);
                         }
                         else
                         {

@@ -15,7 +15,7 @@ namespace Ex03.GarageLogic
             m_VehicleLisenceNumberToVehiclesInformationsInTheGarage = new Dictionary<string, VehicleInfo>();
         }
 
-        public void AddNewVehicle(VehicleFactory.eAvailableVehicleTypes i_VehicleType, string i_ModelName, string i_LicenseNumber, string i_OwnerName, string i_OwnerPhoneNumber, float i_RemainEnergyPercentege, string i_WheelManufacturerName, float i_WheelCurrentAirPressure, Dictionary<string ,object> i_AdditionalSpecificProperties)
+        public void AddNewVehicle(VehicleFactory.eAvailableVehicleTypes i_VehicleType, string i_ModelName, string i_LicenseNumber, string i_OwnerName, string i_OwnerPhoneNumber, float i_RemainEnergyPercentege, string i_WheelManufacturerName, float i_WheelCurrentAirPressure, Dictionary<string, object> i_AdditionalSpecificProperties)
         {
             Vehicle newVehicle = VehicleFactory.createNewVehicle(i_VehicleType, i_ModelName, i_LicenseNumber, i_OwnerName, i_OwnerPhoneNumber, i_RemainEnergyPercentege, i_WheelManufacturerName, i_WheelCurrentAirPressure, i_AdditionalSpecificProperties);
 
@@ -33,14 +33,12 @@ namespace Ex03.GarageLogic
 
         private VehicleInfo findVehicleInformationByLisenceNumber(string i_LisenceNumber)
         {
-
             if (!m_VehicleLisenceNumberToVehiclesInformationsInTheGarage.ContainsKey(i_LisenceNumber))
             {
                 throw new ArgumentException();
             }
 
             return m_VehicleLisenceNumberToVehiclesInformationsInTheGarage[i_LisenceNumber];
-
         }
 
         public void InflateWheelsToMaxAirPressure(string i_LisenceNumber)
@@ -102,7 +100,6 @@ namespace Ex03.GarageLogic
 
         public void GetAllLicenseNumbersByState(ref List<string> io_FilteredLicenseNumbers, eVehicleFixingState i_VehicleFixingState)
         {
-
             foreach (KeyValuePair<string, VehicleInfo> pairOfLisenceNumberToVehicleInfo in m_VehicleLisenceNumberToVehiclesInformationsInTheGarage)
             {
                 if (pairOfLisenceNumberToVehicleInfo.Value.FixingState == i_VehicleFixingState)
