@@ -10,6 +10,11 @@ namespace Ex03.GarageLogic
     {
         private Dictionary<string, VehicleInfo> m_VehicleLisenceNumberToVehiclesInformationsInTheGarage;
 
+        public GarageManager()
+        {
+            m_VehicleLisenceNumberToVehiclesInformationsInTheGarage = new Dictionary<string, VehicleInfo>();
+        }
+
         public void AddNewVehicle(VehicleFactory.eAvailableVehicleTypes i_VehicleType, string i_ModelName, string i_LicenseNumber, string i_OwnerName, string i_OwnerPhoneNumber, float i_RemainEnergyPercentege, string i_WheelManufacturerName, float i_WheelCurrentAirPressure, Dictionary<string ,object> i_AdditionalSpecificProperties)
         {
             Vehicle newVehicle = VehicleFactory.createNewVehicle(i_VehicleType, i_ModelName, i_LicenseNumber, i_OwnerName, i_OwnerPhoneNumber, i_RemainEnergyPercentege, i_WheelManufacturerName, i_WheelCurrentAirPressure, i_AdditionalSpecificProperties);
@@ -106,6 +111,5 @@ namespace Ex03.GarageLogic
                 }
             }
         }
-
     }
 }

@@ -2,6 +2,7 @@
 {
     public enum eMenuOption
     {
+        NoChoice,
         InsertNewVehicle,
         DispayListOfLicenseNumbers,
         ChangeVehicleState,
@@ -10,6 +11,5 @@
         ChargingVehicle,
         DisplayFullDetailsOnVehicle,
         Exit,
-        NoChoice,
     }
 }

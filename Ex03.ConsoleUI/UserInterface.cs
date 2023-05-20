@@ -7,11 +7,11 @@
 
     public class UserInterface
     {
-        private GarageManager m_GarageManager;
+        private readonly GarageManager r_GarageManager;
 
         public UserInterface()
         {
-            this.m_GarageManager = new GarageManager();
+            this.r_GarageManager = new GarageManager();
         }
 
         public void RunGarage()
@@ -314,16 +314,16 @@ Please Choose:
                             Console.WriteLine("Vehicle is already in the garage!");
                             Console.WriteLine("The state of this vehicle has changed to in-repair.");
                             System.Threading.Thread.Sleep(1500);
-                            m_GarageManager.ChangeVehicleState(lisencePlateNumber, eVehicleFixingState.InProgress);
+                            r_GarageManager.ChangeVehicleState(lisencePlateNumber, eVehicleFixingState.InProgress);
                             break;
                         case eMenuOption.ChangeVehicleState:
                             eVehicleFixingState newState = chooseVehicleState();
-                            m_GarageManager.ChangeVehicleState(lisencePlateNumber, newState);
+                            r_GarageManager.ChangeVehicleState(lisencePlateNumber, newState);
                             Console.WriteLine("The vehicle state has changed.");
                             System.Threading.Thread.Sleep(1000);
                             break;
                         case eMenuOption.InflateWheelAirToMax:
-                            m_GarageManager.InflateWheelsToMaxAirPressure(lisencePlateNumber);
+                            r_GarageManager.InflateWheelsToMaxAirPressure(lisencePlateNumber);
                             Console.WriteLine("All the wheels are inflated to max!");
                             System.Threading.Thread.Sleep(1000);
                             break;
@@ -414,14 +414,14 @@ Please Choose:
                 isValidInput = false;
             }
 
-            m_GarageManager.AddNewVehicle(i_VehicleType, modelName, i_lisencePlateNumber, ownerName, ownerPhoneNumber, amountOfEnergy, manufactureName, currentAirPressure, additionalSpecificProperties);
+            r_GarageManager.AddNewVehicle(i_VehicleType, modelName, i_lisencePlateNumber, ownerName, ownerPhoneNumber, amountOfEnergy, manufactureName, currentAirPressure, additionalSpecificProperties);
             Console.WriteLine("vehicle is created succefully.");
             System.Threading.Thread.Sleep(2000);
         }
 
         private bool checkIfVehicleExistsInGarageByLisenceNumber(string i_LisencePlateNumber)
         {
-            return m_GarageManager.IsLisenceNumberExistsInGarage(i_LisencePlateNumber);
+            return r_GarageManager.IsLisenceNumberExistsInGarage(i_LisencePlateNumber);
         }
 
         private void getLisencePlateNumber(out string o_LisencePlateNumber)
@@ -450,7 +450,7 @@ Please Choose:
                     displayTypesOfEnergySource();
                     validInput = eEnergySourceType.TryParse(Console.ReadLine(), out eEnergySourceType userFuelType);
 
-                    m_GarageManager.LoadEnergySource(i_LisencePlateNumber, amountOfFuel, userFuelType);
+                    r_GarageManager.LoadEnergySource(i_LisencePlateNumber, amountOfFuel, userFuelType);
                     validInput = true;
                 }
                 catch (FormatException formatException)
@@ -476,7 +476,7 @@ Please Choose:
                 {
                     Console.WriteLine("Enter Amount of minutes to Charge: ");
                     amountOfEnergy = float.Parse(Console.ReadLine());
-                    m_GarageManager.LoadEnergySource(i_LisencePlateNumber, amountOfEnergy, eEnergySourceType.Electric);
+                    r_GarageManager.LoadEnergySource(i_LisencePlateNumber, amountOfEnergy, eEnergySourceType.Electric);
                     validInput = true;
                 }
                 catch (FormatException formatException)
@@ -515,16 +515,16 @@ Please Choose:
         private void displayAvailableTypesOfVehicles()
         {
             string vehicleType;
-            for (int i = 1; i <= Enum.GetNames(typeof(eAvailableVehicleTypes)).Length; i++)
+            for (int i = 0; i < Enum.GetNames(typeof(eAvailableVehicleTypes)).Length; i++)
             {
                 vehicleType = ((eAvailableVehicleTypes)i).ToString();
-                Console.WriteLine("To select {0} press {1}.", vehicleType, i);
+                Console.WriteLine("To select {0} press {1}.", vehicleType, i + 1);
             }
         }
 
         private void displayDataOfVehicle(string i_LisencePlateNumber)
         {
-            Console.WriteLine(m_GarageManager.GetDataOfVehicle(i_LisencePlateNumber));
+            Console.WriteLine(r_GarageManager.GetDataOfVehicle(i_LisencePlateNumber));
             System.Threading.Thread.Sleep(10000);
         }
 
@@ -557,11 +557,11 @@ Please Choose:
             if (userChoice == "Y")
             {
                 eVehicleFixingState newState = chooseVehicleState();
-                m_GarageManager.GetAllLicenseNumbersByState(ref vehicleLicenses, newState);
+                r_GarageManager.GetAllLicenseNumbersByState(ref vehicleLicenses, newState);
             }
             else
             {
-                m_GarageManager.GetAllLicenseNumbers(ref vehicleLicenses);
+                r_GarageManager.GetAllLicenseNumbers(ref vehicleLicenses);
             }
 
             if (vehicleLicenses.Count == 0)
