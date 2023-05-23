@@ -35,7 +35,7 @@ namespace Ex03.GarageLogic
         {
             if (!m_VehicleLisenceNumberToVehiclesInformationsInTheGarage.ContainsKey(i_LisenceNumber))
             {
-                throw new ArgumentException();
+                throw new ArgumentException("lisence number " + i_LisenceNumber + "is not found in the garage.");
             }
 
             return m_VehicleLisenceNumberToVehiclesInformationsInTheGarage[i_LisenceNumber];
@@ -47,38 +47,39 @@ namespace Ex03.GarageLogic
 
             foreach (Wheel wheel in desiredVehicleInformation.Vehicle.Wheels)
             {
-                wheel.InflateWheel(wheel.MaxAirPressure);
+                wheel.InflateWheel(wheel.MaxAirPressure - wheel.CurrentAirPressure);
             }
         }
 
-        public void LoadEnergySource(string i_LisenceNumber, float i_AmountOfEnergy, eEnergySourceType i_EnergySourceType, eFuelType i_FuelType = eFuelType.Undefined)
+        public void FuelVehicle(string i_LisenceNumber, float i_AmountOfFuel, eFuelType i_FuelType = eFuelType.Undefined)
         {
             VehicleInfo desiredVehicleInformation = findVehicleInformationByLisenceNumber(i_LisenceNumber);
 
-            if (i_EnergySourceType == eEnergySourceType.Fuel)
+            FuelEnergy fuelEnergyOfTheDesiredVehicle = desiredVehicleInformation.Vehicle.Energy as FuelEnergy;
+            if (fuelEnergyOfTheDesiredVehicle == null)
             {
-                FuelEnergy fuelEnergyOfTheDesiredVehicle = desiredVehicleInformation.Vehicle.Energy as FuelEnergy;
-                if (fuelEnergyOfTheDesiredVehicle == null)
-                {
-                    throw new ArgumentException();
-                }
+                throw new ArgumentException("Vehicle " + i_LisenceNumber + " is not fuel based.");
+            }
 
-                fuelEnergyOfTheDesiredVehicle.AddFuel(i_AmountOfEnergy, i_FuelType);
-            }
-            else if (i_EnergySourceType == eEnergySourceType.Electric)
+            if (fuelEnergyOfTheDesiredVehicle.FuelType != i_FuelType)
             {
-                ElectricEnergy electricEnergyOfTheDesiredVehicle = desiredVehicleInformation.Vehicle.Energy as ElectricEnergy;
-                if (electricEnergyOfTheDesiredVehicle == null)
-                {
-                    throw new ArgumentException();
-                }
+                throw new ArgumentException("Vehicle " + i_LisenceNumber + " is " + Enum.GetName(fuelEnergyOfTheDesiredVehicle.FuelType.GetType(), fuelEnergyOfTheDesiredVehicle.FuelType) + " fuel based.");
+            }
 
-                electricEnergyOfTheDesiredVehicle.ChargeBattery(i_AmountOfEnergy);
-            }
-            else
+            fuelEnergyOfTheDesiredVehicle.AddFuel(i_AmountOfFuel, i_FuelType);
+        }
+
+        public void ChargeVehicle(string i_LisenceNumber, float i_AmountOfTimeInMinutes)
+        {
+            VehicleInfo desiredVehicleInformation = findVehicleInformationByLisenceNumber(i_LisenceNumber);
+
+            ElectricEnergy electricEnergyOfTheDesiredVehicle = desiredVehicleInformation.Vehicle.Energy as ElectricEnergy;
+            if (electricEnergyOfTheDesiredVehicle == null)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("Vehicle " + i_LisenceNumber + " is not electric based.");
             }
+
+            electricEnergyOfTheDesiredVehicle.ChargeBattery(i_AmountOfTimeInMinutes);
         }
 
         public bool IsLisenceNumberExistsInGarage(string i_LisenceNumber)

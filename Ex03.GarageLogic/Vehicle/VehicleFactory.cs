@@ -11,7 +11,7 @@ namespace Ex03.GarageLogic
 
         public enum eAvailableVehicleTypes
         {
-            FuelBasedCar,
+            FuelBasedCar = 1,
             ElectricBasedCar,
             FuelBasedMotorcycle,
             ElectricBasedMotorcycle,
@@ -50,7 +50,7 @@ namespace Ex03.GarageLogic
             return dictionaryOfAditionalProperties;
         }
 
-        public static Vehicle createNewVehicle(eAvailableVehicleTypes i_VehicleType, string i_ModelName, string i_LicenseNumber, string i_OwnerName, string i_OwnerPhoneNumber, float i_RemainEnergyPercentege, string i_WheelManufacturerName, float i_WheelCurrentAirPressure, Dictionary<string ,object> i_AdditionalSpecificProperties)
+        public static Vehicle createNewVehicle(eAvailableVehicleTypes i_VehicleType, string i_ModelName, string i_LicenseNumber, string i_OwnerName, string i_OwnerPhoneNumber, float i_RemainEnergyPercentege, string i_WheelManufacturerName, float i_WheelCurrentAirPressure, Dictionary<string, object> i_AdditionalSpecificProperties)
         {
             Vehicle newlyCreatedVehicle;
             Energy energySourceOfNewlyCreatedVehicle;
@@ -59,17 +59,17 @@ namespace Ex03.GarageLogic
             switch (i_VehicleType)
             {
                 case eAvailableVehicleTypes.FuelBasedCar:
-                    energySourceOfNewlyCreatedVehicle = new FuelEnergy(eFuelType.Octan95, i_RemainEnergyPercentege, 46);
+                    energySourceOfNewlyCreatedVehicle = new FuelEnergy(eFuelType.Octan95, calculateAmountOfEnergyFromPercentage(i_RemainEnergyPercentege, 46f), 46f);
                     wheelsOfNewlyCreatedVehicle = new List<Wheel>();
                     for (int i = 0; i < 5; i++)
                     {
-                        wheelsOfNewlyCreatedVehicle.Add(new Wheel(i_WheelManufacturerName, i_WheelCurrentAirPressure, 33));
+                        wheelsOfNewlyCreatedVehicle.Add(new Wheel(i_WheelManufacturerName, i_WheelCurrentAirPressure, 33f));
                     }
 
                     newlyCreatedVehicle = new Car(i_ModelName, i_LicenseNumber, i_RemainEnergyPercentege, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eCarColor)i_AdditionalSpecificProperties[sr_PropertyNameOfCarColor], (eNumberOfDoors)i_AdditionalSpecificProperties[sr_PropertyNameOfNumberOfDoors]);
                     break;
                 case eAvailableVehicleTypes.ElectricBasedCar:
-                    energySourceOfNewlyCreatedVehicle = new ElectricEnergy(i_RemainEnergyPercentege, 5.2f);
+                    energySourceOfNewlyCreatedVehicle = new ElectricEnergy(calculateAmountOfEnergyFromPercentage(i_RemainEnergyPercentege, 5.2f), 5.2f);
                     wheelsOfNewlyCreatedVehicle = new List<Wheel>();
                     for (int i = 0; i < 5; i++)
                     {
@@ -79,7 +79,7 @@ namespace Ex03.GarageLogic
                     newlyCreatedVehicle = new Car(i_ModelName, i_LicenseNumber, i_RemainEnergyPercentege, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eCarColor)i_AdditionalSpecificProperties[sr_PropertyNameOfCarColor], (eNumberOfDoors)i_AdditionalSpecificProperties[sr_PropertyNameOfNumberOfDoors]);
                     break;
                 case eAvailableVehicleTypes.FuelBasedMotorcycle:
-                    energySourceOfNewlyCreatedVehicle = new FuelEnergy(eFuelType.Octan98, i_RemainEnergyPercentege, 6.4f);
+                    energySourceOfNewlyCreatedVehicle = new FuelEnergy(eFuelType.Octan98, calculateAmountOfEnergyFromPercentage(i_RemainEnergyPercentege, 6.4f), 6.4f);
                     wheelsOfNewlyCreatedVehicle = new List<Wheel>();
                     for (int i = 0; i < 2; i++)
                     {
@@ -89,7 +89,7 @@ namespace Ex03.GarageLogic
                     newlyCreatedVehicle = new Motorcycle(i_ModelName, i_LicenseNumber, i_RemainEnergyPercentege, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eLisenceType)i_AdditionalSpecificProperties[sr_PropertyNameOfLisenceType], (int)i_AdditionalSpecificProperties[sr_PropertyNameOfEngineVolume]);
                     break;
                 case eAvailableVehicleTypes.ElectricBasedMotorcycle:
-                    energySourceOfNewlyCreatedVehicle = new ElectricEnergy(i_RemainEnergyPercentege, 2.6f);
+                    energySourceOfNewlyCreatedVehicle = new ElectricEnergy(calculateAmountOfEnergyFromPercentage(i_RemainEnergyPercentege, 2.6f), 2.6f);
                     wheelsOfNewlyCreatedVehicle = new List<Wheel>();
                     for (int i = 0; i < 2; i++)
                     {
@@ -99,7 +99,7 @@ namespace Ex03.GarageLogic
                     newlyCreatedVehicle = new Motorcycle(i_ModelName, i_LicenseNumber, i_RemainEnergyPercentege, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eLisenceType)i_AdditionalSpecificProperties[sr_PropertyNameOfLisenceType], (int)i_AdditionalSpecificProperties[sr_PropertyNameOfEngineVolume]);
                     break;
                 case eAvailableVehicleTypes.Truck:
-                    energySourceOfNewlyCreatedVehicle = new FuelEnergy(eFuelType.Soler, i_RemainEnergyPercentege, 135);
+                    energySourceOfNewlyCreatedVehicle = new FuelEnergy(eFuelType.Soler, calculateAmountOfEnergyFromPercentage(i_RemainEnergyPercentege, 135f), 135f);
                     wheelsOfNewlyCreatedVehicle = new List<Wheel>();
                     for (int i = 0; i < 14; i++)
                     {
@@ -115,5 +115,11 @@ namespace Ex03.GarageLogic
 
             return newlyCreatedVehicle;
         }
+
+        private static float calculateAmountOfEnergyFromPercentage(float i_Current, float i_Max)
+        {
+            return i_Current * i_Max / 100f;
+        }
+
     }
 }

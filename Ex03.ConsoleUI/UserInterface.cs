@@ -28,7 +28,7 @@
                 }
                 catch (FormatException formatException)
                 {
-                    displayFormatExceptionMessage(formatException);
+                    displayFormatExceptionMessage();
                 }
                 catch (ArgumentException argumentException)
                 {
@@ -95,7 +95,7 @@ Please Choose:
         {
             bool validInput = false;
             VehicleFactory.eAvailableVehicleTypes userVehicle = VehicleFactory.eAvailableVehicleTypes.FuelBasedCar;
-            string inputFromUser;
+            string inputFromUserAsString;
             int userChioce;
 
             do
@@ -103,11 +103,11 @@ Please Choose:
                 try
                 {
                     displayAvailableTypesOfVehicles();
-                    inputFromUser = Console.ReadLine();
-                    userChioce = int.Parse(inputFromUser);
+                    inputFromUserAsString = Console.ReadLine();
+                    userChioce = int.Parse(inputFromUserAsString);
                     if (userChioce > 0 && userChioce <= Enum.GetNames(typeof(VehicleFactory.eAvailableVehicleTypes)).Length)
                     {
-                        userVehicle = (VehicleFactory.eAvailableVehicleTypes)Enum.Parse(typeof(VehicleFactory.eAvailableVehicleTypes), inputFromUser);
+                        userVehicle = (VehicleFactory.eAvailableVehicleTypes)Enum.Parse(typeof(VehicleFactory.eAvailableVehicleTypes), inputFromUserAsString);
                         validInput = true;
                     }
                     else
@@ -255,7 +255,7 @@ Please Choose:
                 }
                 catch (FormatException formatException)
                 {
-                    displayFormatExceptionMessage(formatException);
+                    displayFormatExceptionMessage();
                 }
                 catch (ValueOutOfRangeException valueOutOfRangeException)
                 {
@@ -345,7 +345,7 @@ Please Choose:
             }
         }
 
-        private void addVehicle(string i_lisencePlateNumber, VehicleFactory.eAvailableVehicleTypes i_VehicleType)
+        private void addVehicle(string i_lisenceNumber, VehicleFactory.eAvailableVehicleTypes i_VehicleType)
         {
             Dictionary<string, Type> additionalSpecificPropertiesNameAndType;
             bool isValidInput = false;
@@ -412,7 +412,7 @@ Please Choose:
                     }
                     catch (FormatException formatException)
                     {
-                        displayFormatExceptionMessage(formatException);
+                        displayFormatExceptionMessage();
                         userInputAsString = Console.ReadLine();
                         isValidInput = false;
                     }
@@ -427,13 +427,13 @@ Please Choose:
                 isValidInput = false;
             }
 
-            r_GarageManager.AddNewVehicle(i_VehicleType, modelName, i_lisencePlateNumber, ownerName, ownerPhoneNumber, amountOfEnergy, manufactureName, currentAirPressure, additionalSpecificProperties);
+            r_GarageManager.AddNewVehicle(i_VehicleType, modelName, i_lisenceNumber, ownerName, ownerPhoneNumber, amountOfEnergy, manufactureName, currentAirPressure, additionalSpecificProperties);
             Console.WriteLine("vehicle is created succefully.");
         }
 
-        private bool checkIfVehicleExistsInGarageByLisenceNumber(string i_LisencePlateNumber)
+        private bool checkIfVehicleExistsInGarageByLisenceNumber(string i_LisenceNumber)
         {
-            return r_GarageManager.IsLisenceNumberExistsInGarage(i_LisencePlateNumber);
+            return r_GarageManager.IsLisenceNumberExistsInGarage(i_LisenceNumber);
         }
 
         private void getLisencePlateNumber(out string o_LisencePlateNumber)
@@ -450,29 +450,35 @@ Please Choose:
 
         private void fuelVehicle(string i_LisencePlateNumber)
         {
-            float amountOfFuel;
-            bool validInput = false;
-            while (!validInput)
+            float amountOfFuelFromUser;
+            eFuelType fuelTypeFromUser;
+            bool isValidInput = false;
+            while (!isValidInput)
             {
                 try
                 {
                     Console.WriteLine("Enter how much liters of fuel you would like to refuel:");
-                    amountOfFuel = float.Parse(Console.ReadLine());
+                    amountOfFuelFromUser = float.Parse(Console.ReadLine());
 
-                    displayTypesOfEnergySource();
-                    validInput = eEnergySourceType.TryParse(Console.ReadLine(), out eEnergySourceType userFuelType);
+                    displayFuelTypes();
+                    fuelTypeFromUser = (eFuelType)int.Parse(Console.ReadLine());
 
-                    r_GarageManager.LoadEnergySource(i_LisencePlateNumber, amountOfFuel, userFuelType);
-                    validInput = true;
+                    r_GarageManager.FuelVehicle(i_LisencePlateNumber, amountOfFuelFromUser, fuelTypeFromUser);
+                    isValidInput = true;
                 }
                 catch (FormatException formatException)
                 {
-                    validInput = false;
-                    displayFormatExceptionMessage(formatException);
+                    isValidInput = false;
+                    displayFormatExceptionMessage();
+                }
+                catch (ArgumentException argumentException)
+                {
+                    isValidInput = false;
+                    displayArgumentExceptionMessage(argumentException);
                 }
                 catch (ValueOutOfRangeException rangeException)
                 {
-                    validInput = false;
+                    isValidInput = false;
                     displayValueOutOfRangeExceptionMessage(rangeException);
                 }
             }
@@ -488,13 +494,13 @@ Please Choose:
                 {
                     Console.WriteLine("Enter Amount of minutes to Charge: ");
                     amountOfEnergy = float.Parse(Console.ReadLine());
-                    r_GarageManager.LoadEnergySource(i_LisencePlateNumber, amountOfEnergy, eEnergySourceType.Electric);
+                    r_GarageManager.ChargeVehicle(i_LisencePlateNumber, amountOfEnergy);
                     validInput = true;
                 }
                 catch (FormatException formatException)
                 {
                     validInput = false;
-                    displayFormatExceptionMessage(formatException);
+                    displayFormatExceptionMessage();
                 }
                 catch (ValueOutOfRangeException rangeException)
                 {
@@ -514,23 +520,24 @@ Please Choose:
             }
         }
 
-        private void displayTypesOfEnergySource()
+        private void displayFuelTypes()
         {
             string fuelName;
-            for (int i = 2; i <= Enum.GetNames(typeof(eEnergySourceType)).Length; i++)
+            Console.WriteLine("Select The fuel type to fuel with: ");
+            for (int i = 0; i < Enum.GetNames(typeof(eFuelType)).Length - 1; i++)
             {
-                fuelName = ((eEnergySourceType)i).ToString();
-                Console.WriteLine("To select {0} press {1}.", fuelName, i);
+                fuelName = ((eFuelType)(i + 1)).ToString();
+                Console.WriteLine("To select {0} enter {1}.", fuelName, i + 1);
             }
         }
 
         private void displayAvailableTypesOfVehicles()
         {
-            string vehicleType;
-            for (int i = 0; i < Enum.GetNames(typeof(eAvailableVehicleTypes)).Length; i++)
+            string vehicleTypeAsString;
+            for (int i = 1; i <= Enum.GetNames(typeof(eAvailableVehicleTypes)).Length; i++)
             {
-                vehicleType = ((eAvailableVehicleTypes)i).ToString();
-                Console.WriteLine("To select {0} press {1}.", vehicleType, i + 1);
+                vehicleTypeAsString = ((eAvailableVehicleTypes)i).ToString();
+                Console.WriteLine("To select {0} press {1}.", vehicleTypeAsString, i);
             }
         }
 
@@ -589,27 +596,24 @@ Please Choose:
 
         }
 
-        private void displayFormatExceptionMessage(FormatException i_FormatException)
+        private void displayFormatExceptionMessage()
         {
-            System.Console.Clear();
-            Console.WriteLine(i_FormatException.Message);
+            Console.WriteLine("Your input is not in the right format. Please try again.");
         }
 
         private void displayValueOutOfRangeExceptionMessage(ValueOutOfRangeException i_ValueOutOfRangeException)
         {
-            System.Console.Clear();
-            Console.WriteLine(i_ValueOutOfRangeException.Message);
+            Console.WriteLine("Your input is out of range. The allowed range is from {0} to {1}. Please try again.", i_ValueOutOfRangeException.MinValue, i_ValueOutOfRangeException.MaxValue);
         }
 
         private void displayArgumentExceptionMessage(ArgumentException i_ArgumentException)
         {
-            System.Console.Clear();
-            Console.WriteLine(i_ArgumentException.Message);
+            Console.WriteLine("This input is illegal. Cause: {0}. Please try again.", i_ArgumentException.Message);
         }
 
         private void displayGeneralExceptionMessage()
         {
-            Console.WriteLine("something went wrong, Try again.");
+            Console.WriteLine("Something went wrong. Please try again.");
         }
     }
 }

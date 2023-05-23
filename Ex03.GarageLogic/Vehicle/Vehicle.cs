@@ -39,7 +39,7 @@ namespace Ex03.GarageLogic
 
             toStringBuilder.Append("Model name: ").Append(m_ModelName).Append("\n")
                 .Append("Lisence number: ").Append(m_LisenceNumber).Append("\n")
-                .Append("Remaining Energy Persentege: ").Append(m_ModelName).Append("%\n")
+                .Append("Remaining Energy Persentege: ").Append(m_RemainEnergyPercentege).Append("%\n")
                 .Append("Wheels: ").Append("\n");
             foreach (Wheel wheel in Wheels)
             {
@@ -56,7 +56,7 @@ namespace Ex03.GarageLogic
             else
             {
                 ElectricEnergy vehicleEnergySourceAsElectric = m_EnergySource as ElectricEnergy;
-                if ( vehicleEnergySourceAsElectric != null)
+                if (vehicleEnergySourceAsElectric != null)
                 {
                     toStringBuilder.Append(vehicleEnergySourceAsElectric.ToString());
                 }
