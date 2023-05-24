@@ -17,12 +17,13 @@
         public void RunGarage()
         {
             eMenuOption userChoice = eMenuOption.NoChoice;
+
             do
             {
                 printMenu();
                 try
                 {
-                    getChoice(ref userChoice);
+                    userChoice = getChoice();
                     Console.Clear();
                     applyUserChoice(userChoice);
                 }
@@ -50,51 +51,55 @@
         {
             Console.WriteLine(@"
 Welcome To My GARAGE!!
-Please Choose:
-1. Insert A new vehicle
-2. Show the garage's vehicle license numbers list.
-3. Change vehicle state.
-4. Inflate air in the vehicle wheels.
-5. Fuel a regular vehicle.
-6. Charge an elecric vehicle.
-7. Show vehicle's full details.
+Please Choose (Enter the number of your option):
+1. Insert a new vehicle.
+2. Show a list of vehicles' license numbers.
+3. Change vehicle's fixing state.
+4. Inflate air in a vehicle's wheels to the maximum.
+5. Fuel a fuel-based vehicle.
+6. Charge an elecric-based vehicle.
+7. Show a vehicle's information.
 8. Exit");
         }
 
-        private void getChoice(ref eMenuOption io_UserChoice)
+        private eMenuOption getChoice()
         {
-            bool validInput;
-            int userChoice;
-            validInput = int.TryParse(Console.ReadLine(), out userChoice);
-            if (validInput && userChoice > 0 && userChoice <= 8)
+            bool isValidInput;
+            int userChoiceAsInteger;
+            eMenuOption userChoice = eMenuOption.NoChoice;
+
+            isValidInput = int.TryParse(Console.ReadLine(), out userChoiceAsInteger);
+            if (isValidInput && userChoiceAsInteger > 0 && userChoiceAsInteger <= 8)
             {
-                io_UserChoice = (eMenuOption)userChoice;
+                userChoice = (eMenuOption)userChoiceAsInteger;
             }
             else
             {
-                validInput = false;
+                isValidInput = false;
             }
 
-            while (!validInput)
+            while (!isValidInput)
             {
-                Console.WriteLine("Invalid input, please enter input between 1 - 8");
-                validInput = int.TryParse(Console.ReadLine(), out userChoice);
-                if (validInput && userChoice > 0 && userChoice <= 8)
+                Console.WriteLine("Invalid input. Please enter your option between 1 - 8");
+                isValidInput = int.TryParse(Console.ReadLine(), out userChoiceAsInteger);
+                if (isValidInput && userChoiceAsInteger > 0 && userChoiceAsInteger <= 8)
                 {
-                    io_UserChoice = (eMenuOption)userChoice;
+                    userChoice = (eMenuOption)userChoiceAsInteger;
                     continue;
                 }
                 else
                 {
-                    validInput = false;
+                    isValidInput = false;
                 }
             }
+
+            return userChoice;
         }
 
-        private VehicleFactory.eAvailableVehicleTypes getVehicleTypeFromUser()
+        private eAvailableVehicleTypes getVehicleTypeFromUser()
         {
-            bool validInput = false;
-            VehicleFactory.eAvailableVehicleTypes userVehicle = VehicleFactory.eAvailableVehicleTypes.FuelBasedCar;
+            bool isValidInput = false;
+            eAvailableVehicleTypes vehicleTypeFromUser = eAvailableVehicleTypes.FuelBasedCar;
             string inputFromUserAsString;
             int userChioce;
 
@@ -105,15 +110,19 @@ Please Choose:
                     displayAvailableTypesOfVehicles();
                     inputFromUserAsString = Console.ReadLine();
                     userChioce = int.Parse(inputFromUserAsString);
-                    if (userChioce > 0 && userChioce <= Enum.GetNames(typeof(VehicleFactory.eAvailableVehicleTypes)).Length)
+                    if (userChioce > 0 && userChioce <= Enum.GetNames(typeof(eAvailableVehicleTypes)).Length)
                     {
-                        userVehicle = (VehicleFactory.eAvailableVehicleTypes)Enum.Parse(typeof(VehicleFactory.eAvailableVehicleTypes), inputFromUserAsString);
-                        validInput = true;
+                        vehicleTypeFromUser = (eAvailableVehicleTypes)Enum.Parse(typeof(eAvailableVehicleTypes), inputFromUserAsString);
+                        isValidInput = true;
                     }
                     else
                     {
-                        Console.WriteLine("invalid input. Try again.");
+                        Console.WriteLine("Invalid input. Please try again.");
                     }
+                }
+                catch (FormatException formatException)
+                {
+                    displayFormatExceptionMessage();
                 }
                 catch (ArgumentException argumentException)
                 {
@@ -124,134 +133,129 @@ Please Choose:
                     displayGeneralExceptionMessage();
                 }
             }
-            while (!validInput);
+            while (!isValidInput);
 
-            return userVehicle;
+            return vehicleTypeFromUser;
         }
 
-        private float getAmountFromUser(string i_DescriptionAmount)
+        private float getAmountFromUser(string i_AmountDescription)
         {
-            Console.WriteLine("Please enter the amount of {0}: ", i_DescriptionAmount);
-            bool validAmount = false;
-            float amountOf = 0;
-            while (!validAmount)
+            bool isValidAmount = false;
+            float amountFromUser = 0;
+
+            Console.WriteLine("Please enter {0}: ", i_AmountDescription);
+
+            while (!isValidAmount)
             {
                 try
                 {
-                    amountOf = float.Parse(Console.ReadLine());
-                    if (amountOf < 0)
+                    amountFromUser = float.Parse(Console.ReadLine());
+                    if (amountFromUser < 0)
                     {
-                        validAmount = false;
-                        Console.WriteLine("The amount can`t be negative. Please try again: ");
+                        isValidAmount = false;
+                        Console.WriteLine("The amount can`t be a negative number. Please try again: ");
                     }
                     else
                     {
-                        validAmount = true;
+                        isValidAmount = true;
                     }
                 }
-                catch (Exception)
+                catch (FormatException formatException)
                 {
                     displayGeneralExceptionMessage();
                 }
             }
 
-            return amountOf;
+            return amountFromUser;
         }
 
-        private void getSpecificNameFromUser(out string o_Name, string i_NameDescription)
+        private string getSpecificNameFromUser(string i_DescriptionOfTheDesiredName)
         {
-            bool validName = false, isNameInputWithoutSigns = true;
-            Console.WriteLine("Please enter the {0} name: ", i_NameDescription);
-            o_Name = Console.ReadLine();
-            while (!validName)
+            bool isValidName = false;
+            Console.WriteLine("Please enter the {0} name: ", i_DescriptionOfTheDesiredName);
+            string nameInputFromUser = Console.ReadLine();
+            while (!isValidName)
             {
-                if (o_Name.Length == 0)
+                if (nameInputFromUser.Length == 0)
                 {
-                    Console.WriteLine("You inserted an empty name. Please try again: ");
-                    o_Name = Console.ReadLine();
+                    Console.WriteLine("You inserted an empty name. Please try again.");
+                    Console.WriteLine("Please enter the {0} name: ", i_DescriptionOfTheDesiredName);
+                    nameInputFromUser = Console.ReadLine();
                     continue;
                 }
                 else
                 {
-                    foreach (char letter in o_Name)
-                    {
-                        if (!char.IsLetter(letter) && letter != ' ' && !char.IsDigit(letter))
-                        {
-                            isNameInputWithoutSigns = false;
-                            Console.WriteLine("Wrong Input. Please enter only letters: ");
-                            o_Name = Console.ReadLine();
-                            break;
-                        }
-                    }
-                }
-
-                if (isNameInputWithoutSigns)
-                {
-                    validName = true;
-                }
-                else
-                {
-                    isNameInputWithoutSigns = true;
+                    isValidName = true;
                 }
             }
+
+            return nameInputFromUser;
         }
 
-        private void getPhoneNumberFromUser(out string o_PhoneNumber)
+        private string getPhoneNumberFromUser()
         {
-            bool validPhoneNumber = false, isDigitsOnly = true;
+            bool isValidPhoneNumber = false;
             Console.WriteLine("Please enter your phone number (10 digits): ");
-            o_PhoneNumber = Console.ReadLine();
-            while (!validPhoneNumber)
+            string phoneNumberFromUser = Console.ReadLine();
+
+            while (!isValidPhoneNumber)
             {
-                if (o_PhoneNumber.Length != 10)
+                if (phoneNumberFromUser.Length != 10)
                 {
-                    Console.WriteLine("you must type exactly 10 digits. Try again: ");
-                    o_PhoneNumber = Console.ReadLine();
+                    Console.WriteLine("Please enter exactly 10 digits. Please try again.");
+                    Console.WriteLine("Please enter your phone number (10 digits): ");
+                    phoneNumberFromUser = Console.ReadLine();
+                    continue;
+                }
+                else if (!isCharacterSequenceContainsOnlyDigits(phoneNumberFromUser))
+                {
+                    Console.WriteLine("Invalid input. Please enter only digits (0-9): ");
+                    phoneNumberFromUser = Console.ReadLine();
                     continue;
                 }
                 else
                 {
-                    foreach (char digit in o_PhoneNumber)
-                    {
-                        if (!char.IsDigit(digit))
-                        {
-                            isDigitsOnly = false;
-                            Console.WriteLine("Invalid Input. Please enter digits only: ");
-                            o_PhoneNumber = Console.ReadLine();
-                            break;
-                        }
-                    }
-                }
-
-                if (isDigitsOnly)
-                {
-                    validPhoneNumber = true;
-                }
-                else
-                {
-                    isDigitsOnly = true;
+                    isValidPhoneNumber = true;
                 }
             }
+
+            return phoneNumberFromUser;
         }
 
-        private void getPersonalDetailsFromUser(out string o_OwnerName, out string o_OwnerPhoneNumber)
+        private bool isCharacterSequenceContainsOnlyDigits(string i_phoneNumberFromUser)
         {
-            getSpecificNameFromUser(out string ownerNameFromUser, "Vehicle Owner");
-            getPhoneNumberFromUser(out string ownerPhoneNumberFromUser);
+            const bool v_IsSequnceContainsOnlyDigits = true;
+
+            foreach (char characterInPhoneNumber in i_phoneNumberFromUser)
+            {
+                if (!char.IsDigit(characterInPhoneNumber))
+                {
+                    return !v_IsSequnceContainsOnlyDigits;
+                }
+            }
+
+            return v_IsSequnceContainsOnlyDigits;
+        }
+
+        private void getPersonalDetailsOfOwnerFromUser(out string o_OwnerName, out string o_OwnerPhoneNumber)
+        {
+            string ownerNameFromUser = getSpecificNameFromUser("vehicle's owner");
+            string ownerPhoneNumberFromUser = getPhoneNumberFromUser();
+
             o_OwnerName = ownerNameFromUser;
             o_OwnerPhoneNumber = ownerPhoneNumberFromUser;
         }
 
-        private eVehicleFixingState chooseVehicleState()
+        private eVehicleFixingState getNewVehicleStateFromUser()
         {
-            bool validInput = false;
+            bool isValidInput = false;
             eVehicleFixingState newState = eVehicleFixingState.InProgress;
             do
             {
                 try
                 {
                     displayTypesOfVehicleFixingState();
-                    validInput = parseFixingStateFromInput(Console.ReadLine(), out newState);
+                    isValidInput = parseFixingStateFromInput(Console.ReadLine(), out newState);
                 }
                 catch (FormatException formatException)
                 {
@@ -262,15 +266,16 @@ Please Choose:
                     displayValueOutOfRangeExceptionMessage(valueOutOfRangeException);
                 }
             }
-            while (!validInput);
+            while (!isValidInput);
 
             return newState;
         }
 
         private bool parseFixingStateFromInput(string i_UserInput, out eVehicleFixingState o_DesiredState)
         {
-            bool isValid = false;
+            bool isValid;
             o_DesiredState = eVehicleFixingState.InProgress;
+
             if (int.TryParse(i_UserInput, out int vehicleState))
             {
                 if (vehicleState == (int)eVehicleFixingState.InProgress || vehicleState == (int)eVehicleFixingState.Fixed || vehicleState == (int)eVehicleFixingState.Paid)
@@ -280,12 +285,12 @@ Please Choose:
                 }
                 else
                 {
-                    throw new ValueOutOfRangeException(Enum.GetNames(typeof(eVehicleFixingState)).Length, 1);
+                    throw new ArgumentException("Invalid input.");
                 }
             }
             else
             {
-                throw new FormatException("You didn't entered the right digit!");
+                throw new FormatException();
             }
 
             return isValid;
@@ -293,18 +298,18 @@ Please Choose:
 
         private void applyUserChoice(eMenuOption i_UserChoice)
         {
-            if (i_UserChoice == eMenuOption.DispayListOfLicenseNumbers)
+            if (i_UserChoice == eMenuOption.DisplayListOfLicenseNumbers)
             {
-                displayLicenseNumbersInGarage();
+                displayAllLicenseNumbersInTheGarage();
             }
             else if (i_UserChoice != eMenuOption.Exit)
             {
-                getLisencePlateNumber(out string lisencePlateNumber);
+                string lisencePlateNumber = getLisenceNumberFromUser();
                 bool isVehicleExist = checkIfVehicleExistsInGarageByLisenceNumber(lisencePlateNumber);
 
                 if (i_UserChoice == eMenuOption.InsertNewVehicle && !isVehicleExist)
                 {
-                    VehicleFactory.eAvailableVehicleTypes userVehicle = getVehicleTypeFromUser();
+                    eAvailableVehicleTypes userVehicle = getVehicleTypeFromUser();
                     addVehicle(lisencePlateNumber, userVehicle);
                 }
                 else if (isVehicleExist)
@@ -312,26 +317,26 @@ Please Choose:
                     switch (i_UserChoice)
                     {
                         case eMenuOption.InsertNewVehicle:
-                            Console.WriteLine("Vehicle is already in the garage!");
-                            Console.WriteLine("The state of this vehicle has changed to in-repair.");
+                            Console.WriteLine("This vehicle is already in the garage!");
                             r_GarageManager.ChangeVehicleState(lisencePlateNumber, eVehicleFixingState.InProgress);
+                            Console.WriteLine("The state of this vehicle has changed to \"In Progress\".");
                             break;
                         case eMenuOption.ChangeVehicleState:
-                            eVehicleFixingState newState = chooseVehicleState();
+                            eVehicleFixingState newState = getNewVehicleStateFromUser();
                             r_GarageManager.ChangeVehicleState(lisencePlateNumber, newState);
-                            Console.WriteLine("The vehicle state has changed.");
+                            Console.WriteLine("The vehicle's state has changed to {0}.", newState);
                             break;
                         case eMenuOption.InflateWheelAirToMax:
                             r_GarageManager.InflateWheelsToMaxAirPressure(lisencePlateNumber);
-                            Console.WriteLine("All the wheels are inflated to max!");
+                            Console.WriteLine("All wheels are succesfully inflated to the maximum.");
                             break;
                         case eMenuOption.FuelVehicle:
                             fuelVehicle(lisencePlateNumber);
-                            Console.WriteLine("The vehicle is successfully refueled!");
+                            Console.WriteLine("The vehicle has successfully refueled.");
                             break;
                         case eMenuOption.ChargingVehicle:
                             chargeVehicle(lisencePlateNumber);
-                            Console.WriteLine("The vehicle is successfully charged!");
+                            Console.WriteLine("The vehicle has successfully charged.");
                             break;
                         case eMenuOption.DisplayFullDetailsOnVehicle:
                             displayDataOfVehicle(lisencePlateNumber);
@@ -340,7 +345,7 @@ Please Choose:
                 }
                 else
                 {
-                    Console.WriteLine("You inserted a license plate that does not exist in the system.");
+                    Console.WriteLine("You've inserted a license number that does'nt exist in the garage.");
                 }
             }
         }
@@ -352,23 +357,23 @@ Please Choose:
             object userInput = null;
             Dictionary<string, object> additionalSpecificProperties = new Dictionary<string, object>();
 
-            getSpecificNameFromUser(out string modelName, "Model Vehicle");
-            float amountOfEnergy = getAmountFromUser("Vehicle Energy");
-            getSpecificNameFromUser(out string manufactureName, "Wheel Manufacturer");
-            float currentAirPressure = getAmountFromUser("wheels Air Pressure");
-            getPersonalDetailsFromUser(out string ownerName, out string ownerPhoneNumber);
+            string modelName = getSpecificNameFromUser("vehicle's model");
+            float amountOfEnergy = getAmountFromUser("vehicle's energy percentege (%)");
+            string manufactureName = getSpecificNameFromUser("wheels' Manufacturer");
+            float currentAirPressure = getAmountFromUser("current wheels' air pressure");
+            getPersonalDetailsOfOwnerFromUser(out string ownerName, out string ownerPhoneNumber);
 
             additionalSpecificPropertiesNameAndType = VehicleFactory.GetAddidtionalSpecificPropertiesNameAndTypesForAVehicle(i_VehicleType);
             foreach (KeyValuePair<string, Type> propertyNameToPropertyTypePair in additionalSpecificPropertiesNameAndType)
             {
-                Console.WriteLine($"Please Enter {propertyNameToPropertyTypePair.Key}");
+                Console.WriteLine($"Please enter {propertyNameToPropertyTypePair.Key}");
                 if (propertyNameToPropertyTypePair.Value.IsEnum)
                 {
                     System.Text.StringBuilder enumStringBuilder = new System.Text.StringBuilder();
                     enumStringBuilder.Append("(enter one of the following: ");
                     foreach (string nameOfEnum in propertyNameToPropertyTypePair.Value.GetEnumNames())
                     {
-                        enumStringBuilder.Append(nameOfEnum).Append(" ");
+                        enumStringBuilder.Append("\"").Append(nameOfEnum).Append("\" ");
                     }
 
                     enumStringBuilder.Append(") ");
@@ -428,7 +433,7 @@ Please Choose:
             }
 
             r_GarageManager.AddNewVehicle(i_VehicleType, modelName, i_lisenceNumber, ownerName, ownerPhoneNumber, amountOfEnergy, manufactureName, currentAirPressure, additionalSpecificProperties);
-            Console.WriteLine("vehicle is created succefully.");
+            Console.WriteLine("The Vehicle was created succefully.");
         }
 
         private bool checkIfVehicleExistsInGarageByLisenceNumber(string i_LisenceNumber)
@@ -436,16 +441,20 @@ Please Choose:
             return r_GarageManager.IsLisenceNumberExistsInGarage(i_LisenceNumber);
         }
 
-        private void getLisencePlateNumber(out string o_LisencePlateNumber)
+        private string getLisenceNumberFromUser()
         {
-            Console.WriteLine("Please enter your lisence plate number: ");
-            o_LisencePlateNumber = Console.ReadLine();
-            while (o_LisencePlateNumber.Length == 0)
+            string lisenceNumberFromUser;
+
+            Console.WriteLine("Please enter your lisence number:");
+            lisenceNumberFromUser = Console.ReadLine();
+            while (lisenceNumberFromUser.Length == 0)
             {
-                Console.WriteLine("lisence plate must contain at least 1 number.");
-                Console.WriteLine("Please enter your lisence plate number: ");
-                o_LisencePlateNumber = Console.ReadLine();
+                Console.WriteLine("A lisence number must contain at least one number.");
+                Console.WriteLine("Please enter your lisence number: ");
+                lisenceNumberFromUser = Console.ReadLine();
             }
+
+            return lisenceNumberFromUser;
         }
 
         private void fuelVehicle(string i_LisencePlateNumber)
@@ -453,11 +462,12 @@ Please Choose:
             float amountOfFuelFromUser;
             eFuelType fuelTypeFromUser;
             bool isValidInput = false;
+
             while (!isValidInput)
             {
                 try
                 {
-                    Console.WriteLine("Enter how much liters of fuel you would like to refuel:");
+                    Console.WriteLine("Enter how much liters of fuel would you like to refuel:");
                     amountOfFuelFromUser = float.Parse(Console.ReadLine());
 
                     displayFuelTypes();
@@ -486,25 +496,26 @@ Please Choose:
 
         private void chargeVehicle(string i_LisencePlateNumber)
         {
-            float amountOfEnergy;
-            bool validInput = false;
-            while (!validInput)
+            float amountOfMinutesToCharge;
+            bool isValidInput = false;
+
+            while (!isValidInput)
             {
                 try
                 {
-                    Console.WriteLine("Enter Amount of minutes to Charge: ");
-                    amountOfEnergy = float.Parse(Console.ReadLine());
-                    r_GarageManager.ChargeVehicle(i_LisencePlateNumber, amountOfEnergy);
-                    validInput = true;
+                    Console.WriteLine("Enter the amount of minutes to charge: ");
+                    amountOfMinutesToCharge = float.Parse(Console.ReadLine());
+                    r_GarageManager.ChargeVehicle(i_LisencePlateNumber, amountOfMinutesToCharge);
+                    isValidInput = true;
                 }
                 catch (FormatException formatException)
                 {
-                    validInput = false;
+                    isValidInput = false;
                     displayFormatExceptionMessage();
                 }
                 catch (ValueOutOfRangeException rangeException)
                 {
-                    validInput = false;
+                    isValidInput = false;
                     displayValueOutOfRangeExceptionMessage(rangeException);
                 }
             }
@@ -512,18 +523,20 @@ Please Choose:
 
         private void displayTypesOfVehicleFixingState()
         {
-            string stateName;
+            string fixingStateName;
+
+            Console.WriteLine("Please select you desired fixing state to the vehicle: ");
             for (int i = 0; i < Enum.GetNames(typeof(eVehicleFixingState)).Length; i++)
             {
-                stateName = ((eVehicleFixingState)i).ToString();
-                Console.WriteLine("To select {0} press {1}.", stateName, i);
+                fixingStateName = ((eVehicleFixingState)i).ToString();
+                Console.WriteLine("To select {0} press {1}.", fixingStateName, i);
             }
         }
 
         private void displayFuelTypes()
         {
             string fuelName;
-            Console.WriteLine("Select The fuel type to fuel with: ");
+            Console.WriteLine("Select the fuel type to fuel with: ");
             for (int i = 0; i < Enum.GetNames(typeof(eFuelType)).Length - 1; i++)
             {
                 fuelName = ((eFuelType)(i + 1)).ToString();
@@ -534,6 +547,8 @@ Please Choose:
         private void displayAvailableTypesOfVehicles()
         {
             string vehicleTypeAsString;
+
+            Console.WriteLine("Select you desired type of vehicle: ");
             for (int i = 1; i <= Enum.GetNames(typeof(eAvailableVehicleTypes)).Length; i++)
             {
                 vehicleTypeAsString = ((eAvailableVehicleTypes)i).ToString();
@@ -546,23 +561,24 @@ Please Choose:
             Console.WriteLine(r_GarageManager.GetDataOfVehicle(i_LisencePlateNumber));
         }
 
-        private void displayLicenseNumbersInGarage()
+        private void displayAllLicenseNumbersInTheGarage()
         {
             string userChoice = string.Empty;
-            bool validInput = false;
-            while (!validInput)
+            bool isValidInput = false;
+
+            while (!isValidInput)
             {
                 try
                 {
-                    Console.WriteLine("Would you like to filter by the condition of the vehicle? (y/n)");
+                    Console.WriteLine("Would you like to filter by the fixing state of the vehicle? (Y / N)");
                     userChoice = Console.ReadLine().ToUpper();
                     if (userChoice.Length == 1 && (userChoice == "N" || userChoice == "Y"))
                     {
-                        validInput = true;
+                        isValidInput = true;
                     }
                     else
                     {
-                        Console.WriteLine("Invalid Input! Please try again.");
+                        Console.WriteLine("Invalid Input. Please enter only \"Y\" or \"N\". Please try again.");
                     }
                 }
                 catch (Exception)
@@ -574,8 +590,8 @@ Please Choose:
             List<string> vehicleLicenses = new List<string>();
             if (userChoice == "Y")
             {
-                eVehicleFixingState newState = chooseVehicleState();
-                r_GarageManager.GetAllLicenseNumbersByState(ref vehicleLicenses, newState);
+                eVehicleFixingState userDesiredState = getNewVehicleStateFromUser();
+                r_GarageManager.GetAllLicenseNumbersByState(ref vehicleLicenses, userDesiredState);
             }
             else
             {

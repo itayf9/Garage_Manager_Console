@@ -79,7 +79,7 @@ namespace Ex03.GarageLogic
                 throw new ArgumentException("Vehicle " + i_LisenceNumber + " is not electric based.");
             }
 
-            electricEnergyOfTheDesiredVehicle.ChargeBattery(i_AmountOfTimeInMinutes);
+            electricEnergyOfTheDesiredVehicle.ChargeBattery(i_AmountOfTimeInMinutes / 60f);
         }
 
         public bool IsLisenceNumberExistsInGarage(string i_LisenceNumber)

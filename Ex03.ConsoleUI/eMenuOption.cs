@@ -4,7 +4,7 @@
     {
         NoChoice,
         InsertNewVehicle,
-        DispayListOfLicenseNumbers,
+        DisplayListOfLicenseNumbers,
         ChangeVehicleState,
         InflateWheelAirToMax,
         FuelVehicle,
