@@ -10,7 +10,6 @@ namespace Ex03.GarageLogic
     {
         private string m_ModelName;
         private string m_LisenceNumber;
-        private float m_RemainEnergyPercentege;
         private Energy m_EnergySource;
         private List<Wheel> m_Wheels;
 
@@ -24,11 +23,10 @@ namespace Ex03.GarageLogic
             get { return m_Wheels; }
         }
 
-        public Vehicle(string i_ModelName, string i_LisenceNumber, float i_RemainEnergyPercentege, Energy i_EnergySource, List<Wheel> i_Wheels)
+        public Vehicle(string i_ModelName, string i_LisenceNumber, Energy i_EnergySource, List<Wheel> i_Wheels)
         {
             this.m_ModelName = i_ModelName;
             this.m_LisenceNumber = i_LisenceNumber;
-            this.m_RemainEnergyPercentege = i_RemainEnergyPercentege;
             this.m_EnergySource = i_EnergySource;
             this.m_Wheels = i_Wheels;
         }
@@ -39,13 +37,10 @@ namespace Ex03.GarageLogic
 
             toStringBuilder.Append("Model name: ").Append(m_ModelName).Append("\n")
                 .Append("Lisence number: ").Append(m_LisenceNumber).Append("\n")
-                .Append("Remaining Energy Persentege: ").Append(m_RemainEnergyPercentege).Append("%\n")
                 .Append("Wheels: ").Append("\n");
-            foreach (Wheel wheel in Wheels)
+            for (int i = 0; i < m_Wheels.Count; i++)
             {
-                toStringBuilder.Append("--------\n");
-                toStringBuilder.Append(wheel.ToString()).Append("\n");
-                toStringBuilder.Append("--------\n");
+                toStringBuilder.Append(i + 1).Append(". ").Append(m_Wheels[i].ToString()).Append("\n");
             }
 
             FuelEnergy vehicleEnergySourceAsFuel = m_EnergySource as FuelEnergy;

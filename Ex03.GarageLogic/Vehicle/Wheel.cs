@@ -52,7 +52,7 @@ namespace Ex03.GarageLogic
             StringBuilder toStringBuilder = new StringBuilder();
 
             toStringBuilder.Append("Manufacturer name: ").Append(m_ManufacturerName).Append("\n")
-                .Append("Air peressure (current/maximum): ").Append(m_CurrentAirPressure).Append(" / ").Append(m_MaxAirPressure).Append("\n");
+                .Append("   Air peressure (current/maximum): ").Append(m_CurrentAirPressure).Append(" / ").Append(m_MaxAirPressure).Append("\n");
 
             return toStringBuilder.ToString();
         }

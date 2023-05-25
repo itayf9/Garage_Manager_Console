@@ -35,10 +35,12 @@ namespace Ex03.GarageLogic
         public override string ToString()
         {
             StringBuilder toStringBuilder = new StringBuilder();
-            toStringBuilder.Append("Owner name: ").Append(m_OwnerName).Append("\n")
+            toStringBuilder.Append("----------------\n")
+                .Append("Owner name: ").Append(m_OwnerName).Append("\n")
                 .Append("Owner phone number: ").Append(m_OwnerPhoneNumber).Append("\n")
                 .Append("Fixing state: ").Append(m_FixingState).Append("\n")
-                .Append(Vehicle.ToString()).Append("\n");
+                .Append(Vehicle.ToString())
+                .Append("----------------\n").Append("\n");
 
             return toStringBuilder.ToString();
         }

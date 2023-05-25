@@ -12,12 +12,12 @@ namespace Ex03.GarageLogic
         private eFuelType m_FuelType;
         private float m_CurrentFuelAmount;
 
-        public FuelEnergy(eFuelType fuelType, float currentFuelAmount, float maxFuelAmount)
-            : base()
+        public FuelEnergy(float i_RemainEnergyPercentege, eFuelType i_FuelType, float i_CurrentFuelAmount, float i_MaxFuelAmount)
+            : base(i_RemainEnergyPercentege)
         {
-            this.m_FuelType = fuelType;
-            this.m_CurrentFuelAmount = currentFuelAmount;
-            this.r_MaxFuelAmount = maxFuelAmount;
+            this.m_FuelType = i_FuelType;
+            this.m_CurrentFuelAmount = i_CurrentFuelAmount;
+            this.r_MaxFuelAmount = i_MaxFuelAmount;
         }
 
         public eFuelType FuelType
@@ -43,14 +43,21 @@ namespace Ex03.GarageLogic
             }
         }
 
+        public override void updatePercentegeOfRemainingEnergy()
+        {
+            this.m_RemainEnergyPercentege = m_CurrentFuelAmount / r_MaxFuelAmount * 100;
+        }
+
         public override string ToString()
         {
             StringBuilder toStringBuilder = new StringBuilder();
 
-            toStringBuilder.Append("Fuel Type: ").Append(m_FuelType).Append("\n")
+            toStringBuilder.Append(base.ToString())
+                .Append("Fuel Type: ").Append(m_FuelType).Append("\n")
                 .Append("Fuel amount (current/maximum): ").Append(m_CurrentFuelAmount).Append(" / ").Append(r_MaxFuelAmount).Append("\n");
 
             return toStringBuilder.ToString();
         }
+
     }
 }

@@ -304,13 +304,19 @@ Please Choose (Enter the number of your option):
             }
             else if (i_UserChoice != eMenuOption.Exit)
             {
-                string lisencePlateNumber = getLisenceNumberFromUser();
-                bool isVehicleExist = checkIfVehicleExistsInGarageByLisenceNumber(lisencePlateNumber);
+                string lisenceNumber = getLisenceNumberFromUser();
+                bool isVehicleExist = checkIfVehicleExistsInGarageByLisenceNumber(lisenceNumber);
 
                 if (i_UserChoice == eMenuOption.InsertNewVehicle && !isVehicleExist)
                 {
                     eAvailableVehicleTypes userVehicle = getVehicleTypeFromUser();
-                    addVehicle(lisencePlateNumber, userVehicle);
+
+                    bool isValidInputOfNewVehicleProperties;
+                    do
+                    {
+                         isValidInputOfNewVehicleProperties = addNewVehicleToTheGarage(lisenceNumber, userVehicle);
+                    }while (!isValidInputOfNewVehicleProperties);
+                   
                 }
                 else if (isVehicleExist)
                 {
@@ -318,28 +324,35 @@ Please Choose (Enter the number of your option):
                     {
                         case eMenuOption.InsertNewVehicle:
                             Console.WriteLine("This vehicle is already in the garage!");
-                            r_GarageManager.ChangeVehicleState(lisencePlateNumber, eVehicleFixingState.InProgress);
+                            r_GarageManager.ChangeVehicleState(lisenceNumber, eVehicleFixingState.InProgress);
                             Console.WriteLine("The state of this vehicle has changed to \"In Progress\".");
                             break;
                         case eMenuOption.ChangeVehicleState:
                             eVehicleFixingState newState = getNewVehicleStateFromUser();
-                            r_GarageManager.ChangeVehicleState(lisencePlateNumber, newState);
+                            r_GarageManager.ChangeVehicleState(lisenceNumber, newState);
                             Console.WriteLine("The vehicle's state has changed to {0}.", newState);
                             break;
                         case eMenuOption.InflateWheelAirToMax:
-                            r_GarageManager.InflateWheelsToMaxAirPressure(lisencePlateNumber);
+                            r_GarageManager.InflateWheelsToMaxAirPressure(lisenceNumber);
                             Console.WriteLine("All wheels are succesfully inflated to the maximum.");
                             break;
                         case eMenuOption.FuelVehicle:
-                            fuelVehicle(lisencePlateNumber);
-                            Console.WriteLine("The vehicle has successfully refueled.");
+                            bool isSecceededFueling = fuelVehicle(lisenceNumber);
+                            if (isSecceededFueling == true)
+                            {
+                                Console.WriteLine("The vehicle has successfully refueled.");
+                            }
+
                             break;
                         case eMenuOption.ChargingVehicle:
-                            chargeVehicle(lisencePlateNumber);
-                            Console.WriteLine("The vehicle has successfully charged.");
+                            bool isSecceededCharging = chargeVehicle(lisenceNumber);
+                            if (isSecceededCharging == true) 
+                            {
+                                Console.WriteLine("The vehicle has successfully charged.");
+                            }
                             break;
                         case eMenuOption.DisplayFullDetailsOnVehicle:
-                            displayDataOfVehicle(lisencePlateNumber);
+                            displayDataOfVehicle(lisenceNumber);
                             break;
                     }
                 }
@@ -350,10 +363,11 @@ Please Choose (Enter the number of your option):
             }
         }
 
-        private void addVehicle(string i_lisenceNumber, VehicleFactory.eAvailableVehicleTypes i_VehicleType)
+        private bool addNewVehicleToTheGarage(string i_lisenceNumber, eAvailableVehicleTypes i_VehicleType)
         {
             Dictionary<string, Type> additionalSpecificPropertiesNameAndType;
-            bool isValidInput = false;
+            bool isValidTypeOfInput = false;
+            bool isValidInputToAddVehicle = false;
             object userInput = null;
             Dictionary<string, object> additionalSpecificProperties = new Dictionary<string, object>();
 
@@ -382,7 +396,7 @@ Please Choose (Enter the number of your option):
 
                 Console.WriteLine(": ");
                 string userInputAsString = Console.ReadLine();
-                while (!isValidInput)
+                while (!isValidTypeOfInput)
                 {
                     try
                     {
@@ -390,7 +404,7 @@ Please Choose (Enter the number of your option):
                         {
                             if (userInputAsString != "yes" && userInputAsString != "no")
                             {
-                                Console.WriteLine("You must type yes/no");
+                                Console.WriteLine("You must enter Yes/No");
                                 userInputAsString = Console.ReadLine();
                                 continue;
                             }
@@ -412,28 +426,39 @@ Please Choose (Enter the number of your option):
                             userInput = Convert.ChangeType(userInputAsString, propertyNameToPropertyTypePair.Value);
                         }
 
-                        isValidInput = true;
+                        isValidTypeOfInput = true;
                         additionalSpecificProperties.Add(propertyNameToPropertyTypePair.Key, userInput);
                     }
                     catch (FormatException formatException)
                     {
                         displayFormatExceptionMessage();
                         userInputAsString = Console.ReadLine();
-                        isValidInput = false;
+                        isValidTypeOfInput = false;
                     }
                     catch (Exception)
                     {
                         Console.WriteLine("Invalid input! Please Try Again: ");
                         userInputAsString = Console.ReadLine();
-                        isValidInput = false;
+                        isValidTypeOfInput = false;
                     }
                 }
 
-                isValidInput = false;
+                isValidTypeOfInput = false;
             }
 
-            r_GarageManager.AddNewVehicle(i_VehicleType, modelName, i_lisenceNumber, ownerName, ownerPhoneNumber, amountOfEnergy, manufactureName, currentAirPressure, additionalSpecificProperties);
-            Console.WriteLine("The Vehicle was created succefully.");
+            try
+            {
+                r_GarageManager.AddNewVehicle(i_VehicleType, modelName, i_lisenceNumber, ownerName, ownerPhoneNumber, amountOfEnergy, manufactureName, currentAirPressure, additionalSpecificProperties);
+                Console.WriteLine("The vehicle was created succefully.");
+                isValidInputToAddVehicle = true;
+            }
+            catch (ArgumentException argumentException)
+            {
+                displayArgumentExceptionMessage(argumentException);
+                isValidInputToAddVehicle = false;
+            }
+
+            return isValidInputToAddVehicle;
         }
 
         private bool checkIfVehicleExistsInGarageByLisenceNumber(string i_LisenceNumber)
@@ -457,7 +482,7 @@ Please Choose (Enter the number of your option):
             return lisenceNumberFromUser;
         }
 
-        private void fuelVehicle(string i_LisencePlateNumber)
+        private bool fuelVehicle(string i_LisenceNumber)
         {
             float amountOfFuelFromUser;
             eFuelType fuelTypeFromUser;
@@ -473,7 +498,7 @@ Please Choose (Enter the number of your option):
                     displayFuelTypes();
                     fuelTypeFromUser = (eFuelType)int.Parse(Console.ReadLine());
 
-                    r_GarageManager.FuelVehicle(i_LisencePlateNumber, amountOfFuelFromUser, fuelTypeFromUser);
+                    r_GarageManager.FuelVehicle(i_LisenceNumber, amountOfFuelFromUser, fuelTypeFromUser);
                     isValidInput = true;
                 }
                 catch (FormatException formatException)
@@ -485,6 +510,7 @@ Please Choose (Enter the number of your option):
                 {
                     isValidInput = false;
                     displayArgumentExceptionMessage(argumentException);
+                    break;
                 }
                 catch (ValueOutOfRangeException rangeException)
                 {
@@ -492,9 +518,10 @@ Please Choose (Enter the number of your option):
                     displayValueOutOfRangeExceptionMessage(rangeException);
                 }
             }
+            return isValidInput;
         }
 
-        private void chargeVehicle(string i_LisencePlateNumber)
+        private bool chargeVehicle(string i_LisenceNumber)
         {
             float amountOfMinutesToCharge;
             bool isValidInput = false;
@@ -505,7 +532,7 @@ Please Choose (Enter the number of your option):
                 {
                     Console.WriteLine("Enter the amount of minutes to charge: ");
                     amountOfMinutesToCharge = float.Parse(Console.ReadLine());
-                    r_GarageManager.ChargeVehicle(i_LisencePlateNumber, amountOfMinutesToCharge);
+                    r_GarageManager.ChargeVehicle(i_LisenceNumber, amountOfMinutesToCharge);
                     isValidInput = true;
                 }
                 catch (FormatException formatException)
@@ -513,12 +540,19 @@ Please Choose (Enter the number of your option):
                     isValidInput = false;
                     displayFormatExceptionMessage();
                 }
+                catch (ArgumentException argumentException)
+                {
+                    isValidInput = false;
+                    displayArgumentExceptionMessage(argumentException);
+                    break;
+                }
                 catch (ValueOutOfRangeException rangeException)
                 {
                     isValidInput = false;
                     displayValueOutOfRangeExceptionMessage(rangeException);
                 }
             }
+            return isValidInput;
         }
 
         private void displayTypesOfVehicleFixingState()
@@ -556,9 +590,9 @@ Please Choose (Enter the number of your option):
             }
         }
 
-        private void displayDataOfVehicle(string i_LisencePlateNumber)
+        private void displayDataOfVehicle(string i_LisenceNumber)
         {
-            Console.WriteLine(r_GarageManager.GetDataOfVehicle(i_LisencePlateNumber));
+            Console.WriteLine(r_GarageManager.GetDataOfVehicle(i_LisenceNumber));
         }
 
         private void displayAllLicenseNumbersInTheGarage()
@@ -609,7 +643,6 @@ Please Choose (Enter the number of your option):
                     Console.WriteLine(licenseNumber);
                 }
             }
-
         }
 
         private void displayFormatExceptionMessage()
@@ -624,7 +657,7 @@ Please Choose (Enter the number of your option):
 
         private void displayArgumentExceptionMessage(ArgumentException i_ArgumentException)
         {
-            Console.WriteLine("This input is illegal. Cause: {0}. Please try again.", i_ArgumentException.Message);
+            Console.WriteLine("{0}. Please try again.", i_ArgumentException.Message);
         }
 
         private void displayGeneralExceptionMessage()

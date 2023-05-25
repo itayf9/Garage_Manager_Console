@@ -17,7 +17,15 @@ namespace Ex03.GarageLogic
 
         public void AddNewVehicle(VehicleFactory.eAvailableVehicleTypes i_VehicleType, string i_ModelName, string i_LicenseNumber, string i_OwnerName, string i_OwnerPhoneNumber, float i_RemainEnergyPercentege, string i_WheelManufacturerName, float i_WheelCurrentAirPressure, Dictionary<string, object> i_AdditionalSpecificProperties)
         {
-            Vehicle newVehicle = VehicleFactory.createNewVehicle(i_VehicleType, i_ModelName, i_LicenseNumber, i_OwnerName, i_OwnerPhoneNumber, i_RemainEnergyPercentege, i_WheelManufacturerName, i_WheelCurrentAirPressure, i_AdditionalSpecificProperties);
+            Vehicle newVehicle = null;
+            try
+            {
+                newVehicle = VehicleFactory.createNewVehicle(i_VehicleType, i_ModelName, i_LicenseNumber, i_OwnerName, i_OwnerPhoneNumber, i_RemainEnergyPercentege, i_WheelManufacturerName, i_WheelCurrentAirPressure, i_AdditionalSpecificProperties);
+            }
+            catch (ValueOutOfRangeException valueOutOfRangeException)
+            {
+                throw new ArgumentException($"Wheel air pressure is above the limit. The allowed range is bettwen {valueOutOfRangeException.MinValue} and {valueOutOfRangeException.MaxValue}.");
+            }
 
             VehicleInfo newVehicleInformation = new VehicleInfo(i_OwnerName, i_OwnerPhoneNumber, newVehicle, eVehicleFixingState.InProgress);
 
@@ -58,15 +66,16 @@ namespace Ex03.GarageLogic
             FuelEnergy fuelEnergyOfTheDesiredVehicle = desiredVehicleInformation.Vehicle.Energy as FuelEnergy;
             if (fuelEnergyOfTheDesiredVehicle == null)
             {
-                throw new ArgumentException("Vehicle " + i_LisenceNumber + " is not fuel based.");
+                throw new ArgumentException($"Vehicle {i_LisenceNumber} is not fuel based.");
             }
 
             if (fuelEnergyOfTheDesiredVehicle.FuelType != i_FuelType)
             {
-                throw new ArgumentException("Vehicle " + i_LisenceNumber + " is " + Enum.GetName(fuelEnergyOfTheDesiredVehicle.FuelType.GetType(), fuelEnergyOfTheDesiredVehicle.FuelType) + " fuel based.");
+                throw new ArgumentException($"Vehicle {i_LisenceNumber} is {Enum.GetName(fuelEnergyOfTheDesiredVehicle.FuelType.GetType(), fuelEnergyOfTheDesiredVehicle.FuelType)} fuel based.");
             }
 
             fuelEnergyOfTheDesiredVehicle.AddFuel(i_AmountOfFuel, i_FuelType);
+            fuelEnergyOfTheDesiredVehicle.updatePercentegeOfRemainingEnergy();
         }
 
         public void ChargeVehicle(string i_LisenceNumber, float i_AmountOfTimeInMinutes)
@@ -76,10 +85,11 @@ namespace Ex03.GarageLogic
             ElectricEnergy electricEnergyOfTheDesiredVehicle = desiredVehicleInformation.Vehicle.Energy as ElectricEnergy;
             if (electricEnergyOfTheDesiredVehicle == null)
             {
-                throw new ArgumentException("Vehicle " + i_LisenceNumber + " is not electric based.");
+                throw new ArgumentException($"Vehicle {i_LisenceNumber} is not electric based.");
             }
 
             electricEnergyOfTheDesiredVehicle.ChargeBattery(i_AmountOfTimeInMinutes / 60f);
+            electricEnergyOfTheDesiredVehicle.updatePercentegeOfRemainingEnergy();
         }
 
         public bool IsLisenceNumberExistsInGarage(string i_LisenceNumber)

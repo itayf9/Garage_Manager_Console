@@ -9,12 +9,20 @@ namespace Ex03.GarageLogic
     public class ElectricEnergy : Energy
     {
         private float m_BatteryRemainingTimeInHours;
-        private float m_BatteryMaxTimeInHours;
+        private readonly float r_BatteryMaxTimeInHours;
 
-        public ElectricEnergy(float i_BatteryRemainingTimeInHours, float i_BatteryMaxTimeInHours) : base()
+        public ElectricEnergy(float i_RemainEnergyPercentege, float i_BatteryRemainingTimeInHours, float i_BatteryMaxTimeInHours) : base(i_RemainEnergyPercentege)
         {
             this.m_BatteryRemainingTimeInHours = i_BatteryRemainingTimeInHours;
-            this.m_BatteryMaxTimeInHours = i_BatteryMaxTimeInHours;
+            this.r_BatteryMaxTimeInHours = i_BatteryMaxTimeInHours;
+        }
+
+        public float BatteryRemainingTimeInHours
+        {
+            get
+            {
+                return m_BatteryRemainingTimeInHours;
+            }
         }
 
         public void ChargeBattery(float i_TimeInHoursToCharge)
@@ -25,9 +33,9 @@ namespace Ex03.GarageLogic
             }
 
             float newTimeInHoursAfterCharging = m_BatteryRemainingTimeInHours + i_TimeInHoursToCharge;
-            if (newTimeInHoursAfterCharging > m_BatteryMaxTimeInHours)
+            if (newTimeInHoursAfterCharging > r_BatteryMaxTimeInHours)
             {
-                throw new ValueOutOfRangeException(0, m_BatteryMaxTimeInHours);
+                throw new ValueOutOfRangeException(0, r_BatteryMaxTimeInHours);
             }
             else
             {
@@ -35,11 +43,16 @@ namespace Ex03.GarageLogic
             }
         }
 
+        public override void updatePercentegeOfRemainingEnergy()
+        {
+            m_RemainEnergyPercentege = m_BatteryRemainingTimeInHours / r_BatteryMaxTimeInHours * 100;
+        }
+
         public override string ToString()
         {
             StringBuilder toStringBuilder = new StringBuilder();
 
-            toStringBuilder.Append("Battery time (remaining/maximum): ").Append(m_BatteryRemainingTimeInHours).Append(" / ").Append(m_BatteryMaxTimeInHours).Append(" hours.\n");
+            toStringBuilder.Append(base.ToString()).Append("Battery time (remaining/maximum): ").Append(m_BatteryRemainingTimeInHours).Append(" / ").Append(r_BatteryMaxTimeInHours).Append(" hours.\n");
 
             return toStringBuilder.ToString();
         }
