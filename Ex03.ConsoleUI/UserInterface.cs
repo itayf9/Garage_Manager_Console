@@ -315,8 +315,8 @@ Please Choose (Enter the number of your option):
                     do
                     {
                          isValidInputOfNewVehicleProperties = addNewVehicleToTheGarage(lisenceNumber, userVehicle);
-                    }while (!isValidInputOfNewVehicleProperties);
-                   
+                    }
+                    while (!isValidInputOfNewVehicleProperties);
                 }
                 else if (isVehicleExist)
                 {
@@ -346,10 +346,11 @@ Please Choose (Enter the number of your option):
                             break;
                         case eMenuOption.ChargingVehicle:
                             bool isSecceededCharging = chargeVehicle(lisenceNumber);
-                            if (isSecceededCharging == true) 
+                            if (isSecceededCharging == true)
                             {
                                 Console.WriteLine("The vehicle has successfully charged.");
                             }
+
                             break;
                         case eMenuOption.DisplayFullDetailsOnVehicle:
                             displayDataOfVehicle(lisenceNumber);
@@ -367,8 +368,8 @@ Please Choose (Enter the number of your option):
         {
             Dictionary<string, Type> additionalSpecificPropertiesNameAndType;
             bool isValidTypeOfInput = false;
-            bool isValidInputToAddVehicle = false;
-            object userInput = null;
+            bool isValidInputToAddVehicle;
+            object userInput;
             Dictionary<string, object> additionalSpecificProperties = new Dictionary<string, object>();
 
             string modelName = getSpecificNameFromUser("vehicle's model");
@@ -402,19 +403,20 @@ Please Choose (Enter the number of your option):
                     {
                         if (propertyNameToPropertyTypePair.Value == typeof(bool))
                         {
-                            if (userInputAsString != "yes" && userInputAsString != "no")
+                            string userInputAsStringToUpper = userInputAsString.ToUpper();
+                            if (userInputAsString == "YES")
+                            {
+                                userInput = Convert.ChangeType(true, typeof(bool));
+                            }
+                            else if (userInputAsString == "NO")
+                            {
+                                userInput = Convert.ChangeType(false, typeof(bool));
+                            }
+                            else
                             {
                                 Console.WriteLine("You must enter Yes/No");
                                 userInputAsString = Console.ReadLine();
                                 continue;
-                            }
-                            else if (userInputAsString == "yes")
-                            {
-                                userInput = Convert.ChangeType(true, typeof(bool));
-                            }
-                            else if (userInputAsString == "no")
-                            {
-                                userInput = Convert.ChangeType(false, typeof(bool));
                             }
                         }
                         else if (propertyNameToPropertyTypePair.Value.IsEnum)
@@ -518,6 +520,7 @@ Please Choose (Enter the number of your option):
                     displayValueOutOfRangeExceptionMessage(rangeException);
                 }
             }
+
             return isValidInput;
         }
 
@@ -552,6 +555,7 @@ Please Choose (Enter the number of your option):
                     displayValueOutOfRangeExceptionMessage(rangeException);
                 }
             }
+
             return isValidInput;
         }
 

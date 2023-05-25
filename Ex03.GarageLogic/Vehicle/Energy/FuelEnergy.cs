@@ -9,25 +9,25 @@ namespace Ex03.GarageLogic
     public class FuelEnergy : Energy
     {
         private readonly float r_MaxFuelAmount;
-        private eFuelType m_FuelType;
+        private readonly eFuelType r_FuelType;
         private float m_CurrentFuelAmount;
 
         public FuelEnergy(float i_RemainEnergyPercentege, eFuelType i_FuelType, float i_CurrentFuelAmount, float i_MaxFuelAmount)
             : base(i_RemainEnergyPercentege)
         {
-            this.m_FuelType = i_FuelType;
+            this.r_FuelType = i_FuelType;
             this.m_CurrentFuelAmount = i_CurrentFuelAmount;
             this.r_MaxFuelAmount = i_MaxFuelAmount;
         }
 
         public eFuelType FuelType
         {
-            get { return m_FuelType; }
+            get { return r_FuelType; }
         }
 
         public void AddFuel(float i_FuelAmoutToAdd, eFuelType i_FuelType)
         {
-            if (i_FuelType != m_FuelType || i_FuelAmoutToAdd < 0)
+            if (i_FuelType != r_FuelType || i_FuelAmoutToAdd < 0)
             {
                 throw new ArgumentException();
             }
@@ -53,11 +53,10 @@ namespace Ex03.GarageLogic
             StringBuilder toStringBuilder = new StringBuilder();
 
             toStringBuilder.Append(base.ToString())
-                .Append("Fuel Type: ").Append(m_FuelType).Append("\n")
+                .Append("Fuel Type: ").Append(r_FuelType).Append("\n")
                 .Append("Fuel amount (current/maximum): ").Append(m_CurrentFuelAmount).Append(" / ").Append(r_MaxFuelAmount).Append("\n");
 
             return toStringBuilder.ToString();
         }
-
     }
 }

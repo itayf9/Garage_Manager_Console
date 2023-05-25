@@ -8,8 +8,8 @@ namespace Ex03.GarageLogic
 {
     public class ElectricEnergy : Energy
     {
-        private float m_BatteryRemainingTimeInHours;
         private readonly float r_BatteryMaxTimeInHours;
+        private float m_BatteryRemainingTimeInHours;
 
         public ElectricEnergy(float i_RemainEnergyPercentege, float i_BatteryRemainingTimeInHours, float i_BatteryMaxTimeInHours) : base(i_RemainEnergyPercentege)
         {

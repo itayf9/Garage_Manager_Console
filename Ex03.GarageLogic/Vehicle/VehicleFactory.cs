@@ -25,6 +25,20 @@ namespace Ex03.GarageLogic
         public static readonly string sr_PropertyNameOfIsCarriesDangerousLoads = "Is Carries Dangarous Loads (Yes/No)";
         public static readonly string sr_PropertyNameOfLoadVolume = "Load Volume (a positive real number)";
 
+        public static readonly float sr_MaxFuelAmountForFuelBasedCar = 46f;
+        public static readonly float sr_MaxBatteryTimeInHoursForElectricBasedCar = 5.2f;
+        public static readonly float sr_MaxWheelAirPressureForCar = 33f;
+        public static readonly int sr_NumberOfWheelsForCar = 5;
+
+        public static readonly float sr_MaxFuelAmountForFuelBasedMotocycle = 6.4f;
+        public static readonly float sr_MaxBatteryTimeInHoursForElectricBasedMotorcycle = 2.6f;
+        public static readonly float sr_MaxWheelAirPressureForMotorcycle = 31f;
+        public static readonly int sr_NumberOfWheelsForMotorcycle = 2;
+
+        public static readonly float sr_MaxFuelAmountForFuelBasedTruck = 135f;
+        public static readonly float sr_MaxWheelAirPressureForTruck = 26f;
+        public static readonly float sr_NumberOfWheelsForTruck = 14;
+
         public static Dictionary<string, Type> GetAddidtionalSpecificPropertiesNameAndTypesForAVehicle(eAvailableVehicleTypes i_VehicleType)
         {
             Dictionary<string, Type> dictionaryOfAditionalProperties = new Dictionary<string, Type>();
@@ -56,68 +70,82 @@ namespace Ex03.GarageLogic
             Energy energySourceOfNewlyCreatedVehicle;
             List<Wheel> wheelsOfNewlyCreatedVehicle;
 
-            verifyValidEnergyPercentegeValue(i_RemainEnergyPercentege);
-
-            switch (i_VehicleType)
+            try
             {
-                case eAvailableVehicleTypes.FuelBasedCar:
-                    energySourceOfNewlyCreatedVehicle = new FuelEnergy(i_RemainEnergyPercentege, eFuelType.Octan95, calculateAmountOfEnergyFromPercentage(i_RemainEnergyPercentege, 46f), 46f);
-                    verifyValidWheelAirPressure(i_WheelCurrentAirPressure, 33f);
-                    wheelsOfNewlyCreatedVehicle = new List<Wheel>();
-                    for (int i = 0; i < 5; i++)
-                    {
-                        wheelsOfNewlyCreatedVehicle.Add(new Wheel(i_WheelManufacturerName, i_WheelCurrentAirPressure, 33f));
-                    }
+                verifyValidEnergyPercentegeValue(i_RemainEnergyPercentege);
+            }
+            catch (ValueOutOfRangeException valueOutOfRangeException)
+            {
+                throw new ArgumentException($"The energy percentage is out of range. The allowed range is bettwen {valueOutOfRangeException.MinValue} and {valueOutOfRangeException.MaxValue}.");
+            }
 
-                    newlyCreatedVehicle = new Car(i_ModelName, i_LicenseNumber, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eCarColor)i_AdditionalSpecificProperties[sr_PropertyNameOfCarColor], (eNumberOfDoors)i_AdditionalSpecificProperties[sr_PropertyNameOfNumberOfDoors]);
-                    break;
-                case eAvailableVehicleTypes.ElectricBasedCar:
-                    energySourceOfNewlyCreatedVehicle = new ElectricEnergy(i_RemainEnergyPercentege, calculateAmountOfEnergyFromPercentage(i_RemainEnergyPercentege, 5.2f), 5.2f);
-                    verifyValidWheelAirPressure(i_WheelCurrentAirPressure, 33);
-                    wheelsOfNewlyCreatedVehicle = new List<Wheel>();
-                    for (int i = 0; i < 5; i++)
-                    {
-                        wheelsOfNewlyCreatedVehicle.Add(new Wheel(i_WheelManufacturerName, i_WheelCurrentAirPressure, 33));
-                    }
+            try
+            {
+                switch (i_VehicleType)
+                {
+                    case eAvailableVehicleTypes.FuelBasedCar:
+                        energySourceOfNewlyCreatedVehicle = new FuelEnergy(i_RemainEnergyPercentege, eFuelType.Octan95, calculateAmountOfEnergyFromPercentage(i_RemainEnergyPercentege, sr_MaxFuelAmountForFuelBasedCar), sr_MaxFuelAmountForFuelBasedCar);
+                        verifyValidWheelAirPressure(i_WheelCurrentAirPressure, sr_MaxWheelAirPressureForCar);
+                        wheelsOfNewlyCreatedVehicle = new List<Wheel>();
+                        for (int i = 0; i < sr_NumberOfWheelsForCar; i++)
+                        {
+                            wheelsOfNewlyCreatedVehicle.Add(new Wheel(i_WheelManufacturerName, i_WheelCurrentAirPressure, sr_MaxWheelAirPressureForCar));
+                        }
 
-                    newlyCreatedVehicle = new Car(i_ModelName, i_LicenseNumber, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eCarColor)i_AdditionalSpecificProperties[sr_PropertyNameOfCarColor], (eNumberOfDoors)i_AdditionalSpecificProperties[sr_PropertyNameOfNumberOfDoors]);
-                    break;
-                case eAvailableVehicleTypes.FuelBasedMotorcycle:
-                    energySourceOfNewlyCreatedVehicle = new FuelEnergy(i_RemainEnergyPercentege, eFuelType.Octan98, calculateAmountOfEnergyFromPercentage(i_RemainEnergyPercentege, 6.4f), 6.4f);
-                    verifyValidWheelAirPressure(i_WheelCurrentAirPressure, 31);
-                    wheelsOfNewlyCreatedVehicle = new List<Wheel>();
-                    for (int i = 0; i < 2; i++)
-                    {
-                        wheelsOfNewlyCreatedVehicle.Add(new Wheel(i_WheelManufacturerName, i_WheelCurrentAirPressure, 31));
-                    }
+                        newlyCreatedVehicle = new Car(i_ModelName, i_LicenseNumber, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eCarColor)i_AdditionalSpecificProperties[sr_PropertyNameOfCarColor], (eNumberOfDoors)i_AdditionalSpecificProperties[sr_PropertyNameOfNumberOfDoors]);
+                        break;
+                    case eAvailableVehicleTypes.ElectricBasedCar:
+                        energySourceOfNewlyCreatedVehicle = new ElectricEnergy(i_RemainEnergyPercentege, calculateAmountOfEnergyFromPercentage(i_RemainEnergyPercentege, sr_MaxBatteryTimeInHoursForElectricBasedCar), sr_MaxBatteryTimeInHoursForElectricBasedCar);
+                        verifyValidWheelAirPressure(i_WheelCurrentAirPressure, sr_MaxWheelAirPressureForCar);
+                        wheelsOfNewlyCreatedVehicle = new List<Wheel>();
+                        for (int i = 0; i < sr_NumberOfWheelsForCar; i++)
+                        {
+                            wheelsOfNewlyCreatedVehicle.Add(new Wheel(i_WheelManufacturerName, i_WheelCurrentAirPressure, sr_MaxWheelAirPressureForCar));
+                        }
 
-                    newlyCreatedVehicle = new Motorcycle(i_ModelName, i_LicenseNumber, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eLisenceType)i_AdditionalSpecificProperties[sr_PropertyNameOfLisenceType], (int)i_AdditionalSpecificProperties[sr_PropertyNameOfEngineVolume]);
-                    break;
-                case eAvailableVehicleTypes.ElectricBasedMotorcycle:
-                    energySourceOfNewlyCreatedVehicle = new ElectricEnergy(i_RemainEnergyPercentege, calculateAmountOfEnergyFromPercentage(i_RemainEnergyPercentege, 2.6f), 2.6f);
-                    verifyValidWheelAirPressure(i_WheelCurrentAirPressure, 31);
-                    wheelsOfNewlyCreatedVehicle = new List<Wheel>();
-                    for (int i = 0; i < 2; i++)
-                    {
-                        wheelsOfNewlyCreatedVehicle.Add(new Wheel(i_WheelManufacturerName, i_WheelCurrentAirPressure, 31));
-                    }
+                        newlyCreatedVehicle = new Car(i_ModelName, i_LicenseNumber, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eCarColor)i_AdditionalSpecificProperties[sr_PropertyNameOfCarColor], (eNumberOfDoors)i_AdditionalSpecificProperties[sr_PropertyNameOfNumberOfDoors]);
+                        break;
+                    case eAvailableVehicleTypes.FuelBasedMotorcycle:
+                        energySourceOfNewlyCreatedVehicle = new FuelEnergy(i_RemainEnergyPercentege, eFuelType.Octan98, calculateAmountOfEnergyFromPercentage(i_RemainEnergyPercentege, sr_MaxFuelAmountForFuelBasedMotocycle), sr_MaxFuelAmountForFuelBasedMotocycle);
+                        verifyValidWheelAirPressure(i_WheelCurrentAirPressure, sr_MaxWheelAirPressureForMotorcycle);
+                        wheelsOfNewlyCreatedVehicle = new List<Wheel>();
+                        for (int i = 0; i < sr_NumberOfWheelsForMotorcycle; i++)
+                        {
+                            wheelsOfNewlyCreatedVehicle.Add(new Wheel(i_WheelManufacturerName, i_WheelCurrentAirPressure, sr_MaxWheelAirPressureForMotorcycle));
+                        }
 
-                    newlyCreatedVehicle = new Motorcycle(i_ModelName, i_LicenseNumber, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eLisenceType)i_AdditionalSpecificProperties[sr_PropertyNameOfLisenceType], (int)i_AdditionalSpecificProperties[sr_PropertyNameOfEngineVolume]);
-                    break;
-                case eAvailableVehicleTypes.Truck:
-                    energySourceOfNewlyCreatedVehicle = new FuelEnergy(i_RemainEnergyPercentege, eFuelType.Soler, calculateAmountOfEnergyFromPercentage(i_RemainEnergyPercentege, 135f), 135f);
-                    verifyValidWheelAirPressure(i_WheelCurrentAirPressure, 26);
-                    wheelsOfNewlyCreatedVehicle = new List<Wheel>();
-                    for (int i = 0; i < 14; i++)
-                    {
-                        wheelsOfNewlyCreatedVehicle.Add(new Wheel(i_WheelManufacturerName, i_WheelCurrentAirPressure, 26));
-                    }
+                        newlyCreatedVehicle = new Motorcycle(i_ModelName, i_LicenseNumber, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eLisenceType)i_AdditionalSpecificProperties[sr_PropertyNameOfLisenceType], (int)i_AdditionalSpecificProperties[sr_PropertyNameOfEngineVolume]);
+                        break;
+                    case eAvailableVehicleTypes.ElectricBasedMotorcycle:
+                        energySourceOfNewlyCreatedVehicle = new ElectricEnergy(i_RemainEnergyPercentege, calculateAmountOfEnergyFromPercentage(i_RemainEnergyPercentege, sr_MaxBatteryTimeInHoursForElectricBasedMotorcycle), sr_MaxBatteryTimeInHoursForElectricBasedMotorcycle);
+                        verifyValidWheelAirPressure(i_WheelCurrentAirPressure, sr_MaxWheelAirPressureForMotorcycle);
+                        wheelsOfNewlyCreatedVehicle = new List<Wheel>();
+                        for (int i = 0; i < sr_NumberOfWheelsForMotorcycle; i++)
+                        {
+                            wheelsOfNewlyCreatedVehicle.Add(new Wheel(i_WheelManufacturerName, i_WheelCurrentAirPressure, sr_MaxWheelAirPressureForMotorcycle));
+                        }
 
-                    newlyCreatedVehicle = new Truck(i_ModelName, i_LicenseNumber, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (bool)i_AdditionalSpecificProperties[sr_PropertyNameOfIsCarriesDangerousLoads], (float)i_AdditionalSpecificProperties[sr_PropertyNameOfLoadVolume]);
-                    break;
-                default:
-                    newlyCreatedVehicle = null;
-                    break;
+                        newlyCreatedVehicle = new Motorcycle(i_ModelName, i_LicenseNumber, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (eLisenceType)i_AdditionalSpecificProperties[sr_PropertyNameOfLisenceType], (int)i_AdditionalSpecificProperties[sr_PropertyNameOfEngineVolume]);
+                        break;
+                    case eAvailableVehicleTypes.Truck:
+                        energySourceOfNewlyCreatedVehicle = new FuelEnergy(i_RemainEnergyPercentege, eFuelType.Soler, calculateAmountOfEnergyFromPercentage(i_RemainEnergyPercentege, sr_MaxFuelAmountForFuelBasedTruck), sr_MaxFuelAmountForFuelBasedTruck);
+                        verifyValidWheelAirPressure(i_WheelCurrentAirPressure, sr_MaxWheelAirPressureForTruck);
+                        wheelsOfNewlyCreatedVehicle = new List<Wheel>();
+                        for (int i = 0; i < sr_NumberOfWheelsForTruck; i++)
+                        {
+                            wheelsOfNewlyCreatedVehicle.Add(new Wheel(i_WheelManufacturerName, i_WheelCurrentAirPressure, sr_MaxWheelAirPressureForTruck));
+                        }
+
+                        newlyCreatedVehicle = new Truck(i_ModelName, i_LicenseNumber, energySourceOfNewlyCreatedVehicle, wheelsOfNewlyCreatedVehicle, (bool)i_AdditionalSpecificProperties[sr_PropertyNameOfIsCarriesDangerousLoads], (float)i_AdditionalSpecificProperties[sr_PropertyNameOfLoadVolume]);
+                        break;
+                    default:
+                        newlyCreatedVehicle = null;
+                        break;
+                }
+            }
+            catch (ValueOutOfRangeException valueOutOfRangeException)
+            {
+                throw new ArgumentException($"The wheels' air pressure is out of range. The allowed range is bettwen {valueOutOfRangeException.MinValue} and {valueOutOfRangeException.MaxValue}.");
             }
 
             return newlyCreatedVehicle;
@@ -133,14 +161,9 @@ namespace Ex03.GarageLogic
 
         private static void verifyValidEnergyPercentegeValue(float i_RemainEnergyPercentege)
         {
-            if (i_RemainEnergyPercentege < 0)
+            if (i_RemainEnergyPercentege < 0 || i_RemainEnergyPercentege > 100)
             {
-                throw new ArgumentException("Remaining Energy Percentege cannot be a negative number.");
-            }
-
-            if (i_RemainEnergyPercentege > 100)
-            {
-                throw new ArgumentException("Remaining Energy Percentege cannot be above 100%.");
+                throw new ValueOutOfRangeException(0, 100);
             }
         }
 

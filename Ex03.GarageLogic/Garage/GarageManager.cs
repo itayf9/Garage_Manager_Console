@@ -17,15 +17,9 @@ namespace Ex03.GarageLogic
 
         public void AddNewVehicle(VehicleFactory.eAvailableVehicleTypes i_VehicleType, string i_ModelName, string i_LicenseNumber, string i_OwnerName, string i_OwnerPhoneNumber, float i_RemainEnergyPercentege, string i_WheelManufacturerName, float i_WheelCurrentAirPressure, Dictionary<string, object> i_AdditionalSpecificProperties)
         {
-            Vehicle newVehicle = null;
-            try
-            {
-                newVehicle = VehicleFactory.createNewVehicle(i_VehicleType, i_ModelName, i_LicenseNumber, i_OwnerName, i_OwnerPhoneNumber, i_RemainEnergyPercentege, i_WheelManufacturerName, i_WheelCurrentAirPressure, i_AdditionalSpecificProperties);
-            }
-            catch (ValueOutOfRangeException valueOutOfRangeException)
-            {
-                throw new ArgumentException($"Wheel air pressure is above the limit. The allowed range is bettwen {valueOutOfRangeException.MinValue} and {valueOutOfRangeException.MaxValue}.");
-            }
+            Vehicle newVehicle;
+
+            newVehicle = VehicleFactory.createNewVehicle(i_VehicleType, i_ModelName, i_LicenseNumber, i_OwnerName, i_OwnerPhoneNumber, i_RemainEnergyPercentege, i_WheelManufacturerName, i_WheelCurrentAirPressure, i_AdditionalSpecificProperties);
 
             VehicleInfo newVehicleInformation = new VehicleInfo(i_OwnerName, i_OwnerPhoneNumber, newVehicle, eVehicleFixingState.InProgress);
 
